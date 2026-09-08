@@ -883,7 +883,10 @@ function drawFullMap(){
   drawRectRoad(MAP.reverseLane);drawRectRoad(MAP.reverseBay);
   drawLine(-12,-3.7,8.2,-3.7);drawLine(-12,3.5,-1.65,3.5);drawLine(1.65,3.5,8.2,3.5);
   drawLine(-1.65,3.5,-1.65,8.9);drawLine(1.65,3.5,1.65,8.9);drawLine(-1.65,8.9,1.65,8.9);
-  drawControlX(-7,-3.7,3.5);drawControlX(7,-3.7,3.5);
+  drawControlX(-7,-3.7,3.5);
+  // 倒车入库右出库完成感应线：车头触线即完成第一项
+  drawDashedLine(7,-3.7,7,3.5,'#6bc5ff',.10,[.28,.16]);
+  if(session.guide&&session.projectIndex===0&&!session.transition)drawTextWorld('车头触线完成',7,-4.05,'#8fdcff');
   // 第一段连接道路
   drawRectRoad(MAP.connector1);drawLine(8,-2.75,18,-2.75);drawLine(8,2.75,18,2.75);drawArrow(13,0,0);
   // 侧方停车
@@ -921,8 +924,8 @@ function makeReverse(){
   return {
     id:'reverse',name:'倒车入库',limit:RULES.reverseLimit,
     spawn:{x:7.3,y:0,h:Math.PI},respawn:{x:7.3,y:0,h:Math.PI},step:0,
-    stepText:['右侧倒车入库：车辆完全入库并停车','左出库：前轮越过左侧控制线','左侧倒车入库：车辆完全入库并停车','右出库后继续向前驶往侧方停车考区'],
-    bay:MAP.reverseBay,leftLine:-7,rightLine:7,finishLine:9.1,
+    stepText:['右侧倒车入库：车辆完全入库并停车','左出库：前轮越过左侧控制线','左侧倒车入库：车辆完全入库并停车','向右驶出：车头触碰蓝色感应线即完成本项目'],
+    bay:MAP.reverseBay,leftLine:-7,rightLine:7,finishLine:7,
     update(dt){
       if(!enforceMap('倒车入库：车轮压越边线'))return;
       const prev=session.prevCarX;
@@ -930,7 +933,18 @@ function makeReverse(){
       if(this.step===0&&fullyInside(this.bay)&&Math.abs(car.speed)<RULES.stopThreshold&&gear==='R'){this.step=1;toast('右倒库完成，请从左侧驶出','ok');}
       else if(this.step===1&&crossedX(prev,frontCenter().x,this.leftLine,-1)&&gear==='D'){this.step=2;toast('请完成左侧倒车入库','ok');}
       else if(this.step===2&&fullyInside(this.bay)&&Math.abs(car.speed)<RULES.stopThreshold&&gear==='R'){this.step=3;toast('左倒库完成，请向右驶出','ok');}
-      else if(this.step===3&&crossedX(prev,rearCenter().x,this.finishLine,1)&&gear==='D'){completeProject();return;}
+      else if(this.step===3&&gear==='D'){
+        // 右出库：以“车头触碰/越过右侧感应线”为准，不再等车尾通过。
+        // 同时使用车头中心与最前角点双重判定，避免低帧率时漏触发。
+        const fc=frontCenter();
+        const maxCornerX=Math.max(...carPoints().map(p=>p.x));
+        if(fc.x>=this.finishLine || maxCornerX>=this.finishLine){
+          if(navigator.vibrate)navigator.vibrate(35);
+          toast('右出库完成，继续向前驶往侧方停车','ok');
+          completeProject();
+          return;
+        }
+      }
       this.checkMidStop(dt);
     },
     stopClock:0,stopLatched:false,
