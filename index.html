@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>乱跑的萎缩｜C2科目二模拟考试</title>
+<title>乱跑表情包｜C2科目二模拟考试</title>
 <style>
 :root{
   --bg:#07110c; --panel:rgba(8,18,14,.82); --panel2:rgba(13,27,21,.9);
@@ -122,21 +122,21 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
 #controls{position:absolute;inset:0;z-index:90;pointer-events:none}
 .mobile-bottom-dock{
   position:absolute;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));
-  display:flex;flex-direction:column;gap:8px;pointer-events:none;
+  display:flex;flex-direction:column;gap:12px;pointer-events:none;
 }
 .mobile-drive-ui{
   position:relative;left:auto;right:auto;bottom:auto;
-  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;pointer-events:none;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;pointer-events:none;
 }
 .simple-card{
-  min-width:0;pointer-events:auto;padding:8px;border:1px solid rgba(255,255,255,.12);border-radius:20px;
+  min-width:0;pointer-events:auto;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:20px;
   background:linear-gradient(180deg,rgba(11,19,16,.94),rgba(6,12,10,.84));
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   box-shadow:0 14px 38px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.05)
 }
 .pad-label{text-align:center;color:rgba(255,255,255,.44);font-size:9px;letter-spacing:1.3px;margin:0 0 6px}
-.steer-row,.drive-row{display:grid;align-items:center;gap:6px}
-.steer-row{grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr)}
+.steer-row,.drive-row{display:grid;align-items:center;gap:10px}
+.steer-row{grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr)}
 .drive-row{grid-template-columns:repeat(3,minmax(0,1fr))}
 .steer-key,.center-key,.drive-key{
   min-width:0;border:1px solid rgba(255,255,255,.11);
@@ -158,8 +158,8 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
 .drive-key.brake.active{transform:translateY(2px);background:linear-gradient(180deg,rgba(255,95,101,.30),rgba(255,95,101,.09));border-color:rgba(255,95,101,.58)}
 .quick-strip{
   position:relative;left:auto;bottom:auto;transform:none;display:grid;
-  grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr) minmax(0,1fr);align-items:center;gap:5px;
-  width:100%;pointer-events:auto;padding:6px;border-radius:15px;border:1px solid rgba(255,255,255,.08);
+  grid-template-columns:minmax(0,1fr) 46px minmax(0,1fr) minmax(0,1fr);align-items:center;gap:9px;
+  width:100%;pointer-events:auto;padding:8px;border-radius:17px;border:1px solid rgba(255,255,255,.08);
   background:rgba(4,9,7,.86);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 30px rgba(0,0,0,.28)
 }
 .quick-btn{min-width:0;height:36px;padding:0 5px;border-radius:10px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.055);font-size:9px;font-weight:800;color:rgba(255,255,255,.76);touch-action:manipulation;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -177,14 +177,34 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
   .topbar{top:8px;left:8px;right:8px}.hud-group{gap:5px}.topbar .hud-card{min-width:58px;padding:6px 7px}.topbar .hud-card strong{font-size:12px}.topbar .hud-card label{font-size:7px}.icon{width:36px;height:36px}
   .topbar .hud-group:first-child .hud-card:nth-child(3){display:none}
   .stage-panel{top:62px;left:8px;width:calc(100vw - 16px);max-width:none;padding:9px 10px;border-radius:15px}.stage-panel h2{font-size:15px;margin-top:4px}.stage-panel p{font-size:9px;margin-top:3px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .mobile-bottom-dock{left:7px;right:7px;bottom:max(8px,env(safe-area-inset-bottom));gap:7px}
+
+  /* 竖屏改为上下两排：每个按钮更宽，避免挤在一起 */
+  .mobile-bottom-dock{left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));gap:10px}
+  .mobile-drive-ui{grid-template-columns:1fr;gap:10px}
+  .simple-card{padding:8px 10px;border-radius:19px}
+  .pad-label{margin-bottom:7px}
+  .steer-row{grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr);gap:12px}
+  .drive-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .steer-key,.drive-key{height:58px;border-radius:17px}
+  .center-key{height:58px;border-radius:15px}
+  .steer-key .steer-icon{font-size:22px}
+  .drive-key span{font-size:15px}.drive-key b{font-size:10px}
+  .quick-strip{grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr) minmax(0,1fr);gap:8px;padding:7px}
+  .quick-btn{height:36px;font-size:9px;padding:0 6px}.gear-pill{height:36px}
+  .mobile-help{font-size:8px}
 }
 
 @media (max-width:390px){
-  .mobile-bottom-dock{left:5px;right:5px;gap:5px}.mobile-drive-ui{gap:5px}.simple-card{padding:6px;border-radius:16px}.pad-label{font-size:8px;margin-bottom:5px}
-  .steer-row{grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr);gap:4px}.drive-row{gap:4px}
-  .steer-key,.drive-key{height:58px;border-radius:15px}.center-key{height:58px;border-radius:13px}.steer-key .steer-icon{font-size:20px}.steer-key small,.center-key small{font-size:8px}.drive-key span{font-size:14px}.drive-key b{font-size:9px}
-  .quick-strip{grid-template-columns:minmax(0,1fr) 38px minmax(0,1fr) minmax(0,1fr);gap:4px;padding:5px}.quick-btn{height:33px;font-size:8px;padding:0 3px}.gear-pill{height:33px}.gear-pill span{font-size:14px}.mobile-help{display:none}
+  .mobile-bottom-dock{left:8px;right:8px;gap:8px}
+  .mobile-drive-ui{gap:8px}
+  .simple-card{padding:7px 8px;border-radius:17px}
+  .pad-label{font-size:8px;margin-bottom:5px}
+  .steer-row{grid-template-columns:minmax(0,1fr) 60px minmax(0,1fr);gap:8px}
+  .drive-row{gap:8px}
+  .steer-key,.drive-key{height:54px;border-radius:15px}.center-key{height:54px;border-radius:13px}
+  .steer-key .steer-icon{font-size:20px}.steer-key small,.center-key small{font-size:8px}.drive-key span{font-size:14px}.drive-key b{font-size:9px}
+  .quick-strip{grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr) minmax(0,1fr);gap:6px;padding:6px}
+  .quick-btn{height:34px;font-size:8px;padding:0 4px}.gear-pill{height:34px}.gear-pill span{font-size:14px}.mobile-help{display:none}
 }
 
 @media (orientation:landscape) and (max-height:520px){
@@ -583,7 +603,7 @@ function crossedX(prevX,x,line,dir=0){return dir===0?((prevX-line)*(x-line)<=0):
 function makeReverse(){
   return {
     id:'reverse',name:'倒车入库',limit:RULES.reverseLimit,spawn:{x:7.3,y:0,h:Math.PI},step:0,stepText:['右侧倒车入库：车辆完全入库并停车','左出库：前轮越过左侧控制线','左侧倒车入库：车辆完全入库并停车','右出库：驶过右侧控制线完成项目'],
-    road:[rect(-10,-3.4,10,3.2),rect(-1.45,3.2,1.45,8.6)],bay:rect(-1.45,3.2,1.45,8.6),leftLine:-7.0,rightLine:7.0,
+    road:[rect(-10,-3.7,10,3.5),rect(-1.65,3.5,1.65,8.9)],bay:rect(-1.65,3.5,1.65,8.9),leftLine:-7.0,rightLine:7.0,
     update(dt){
       const prev=session.prevCarX;
       if(!carPoints().every(p=>pointInAnyRect(p,this.road)))return fail('车身出线 / 车轮压越边线');
@@ -597,13 +617,13 @@ function makeReverse(){
       const shouldMove=!fullyInside(this.bay)&&this.step<4;
       if(shouldMove&&Math.abs(car.speed)<.025&&!handbrake){this.stopClock+=dt;if(this.stopClock>RULES.midStopSeconds&&!this.stopLatched){this.stopLatched=true;penalty(5,'倒车入库中途停车');toast('中途停车 -5','error');}}else{this.stopClock=0;this.stopLatched=false;}
     },
-    draw(){drawGrass();drawRectRoad(rect(-10,-3.4,10,3.2));drawRectRoad(rect(-1.45,3.2,1.45,8.6));drawLine(-10,-3.4,10,-3.4);drawLine(-10,3.2,-1.45,3.2);drawLine(1.45,3.2,10,3.2);drawLine(-1.45,3.2,-1.45,8.6);drawLine(1.45,3.2,1.45,8.6);drawLine(-1.45,8.6,1.45,8.6);drawControlX(this.leftLine,-3.4,3.2);drawControlX(this.rightLine,-3.4,3.2);if(session.guide)drawGhostBay(this.bay,'倒车库');}
+    draw(){drawGrass();drawRectRoad(rect(-10,-3.7,10,3.5));drawRectRoad(this.bay);drawLine(-10,-3.7,10,-3.7);drawLine(-10,3.5,-1.65,3.5);drawLine(1.65,3.5,10,3.5);drawLine(-1.65,3.5,-1.65,8.9);drawLine(1.65,3.5,1.65,8.9);drawLine(-1.65,8.9,1.65,8.9);drawControlX(this.leftLine,-3.7,3.5);drawControlX(this.rightLine,-3.7,3.5);if(session.guide)drawGhostBay(this.bay,'倒车库');}
   };
 }
 function makeSide(){
   return {
-    id:'side',name:'侧方停车',limit:RULES.sideLimit,spawn:{x:6.8,y:0,h:Math.PI},step:0,stepText:['挂 R 挡倒入右侧车位并停车','开启左转向灯，挂 1 挡驶出项目'],
-    road:[rect(-10,-2.1,10,2.1),rect(-2.7,2.1,3.5,4.75)],bay:rect(-2.7,2.1,3.5,4.75),finishX:-7.2,signalChecked:false,
+    id:'side',name:'侧方停车',limit:RULES.sideLimit,spawn:{x:6.8,y:0,h:Math.PI},step:0,stepText:['挂 R 挡倒入右侧车位并停车','开启左转向灯，挂 D 挡驶出项目'],
+    road:[rect(-10,-2.4,10,2.4),rect(-2.9,2.4,3.7,5.15)],bay:rect(-2.9,2.4,3.7,5.15),finishX:-7.2,signalChecked:false,
     update(dt){
       const prev=session.prevCarX;
       if(!carPoints().every(p=>pointInAnyRect(p,this.road)))return fail('侧方停车：车身出线 / 压越边线');
@@ -613,20 +633,20 @@ function makeSide(){
       this.checkMidStop(dt);
     },
     stopClock:0,stopLatched:false,checkMidStop(dt){if(this.step===0&&!fullyInside(this.bay)&&Math.abs(car.speed)<.025&&!handbrake){this.stopClock+=dt;if(this.stopClock>2&&!this.stopLatched){this.stopLatched=true;penalty(5,'侧方停车中途停车');}}else{this.stopClock=0;this.stopLatched=false;}},
-    draw(){drawGrass();drawRectRoad(rect(-10,-2.1,10,2.1));drawRectRoad(this.bay);drawLine(-10,-2.1,10,-2.1);drawLine(-10,2.1,-2.7,2.1);drawLine(3.5,2.1,10,2.1);drawLine(-2.7,2.1,-2.7,4.75);drawLine(3.5,2.1,3.5,4.75);drawLine(-2.7,4.75,3.5,4.75);drawControlX(this.finishX,-2.1,2.1);if(session.guide)drawGhostBay(this.bay,'侧方位');}
+    draw(){drawGrass();drawRectRoad(rect(-10,-2.4,10,2.4));drawRectRoad(this.bay);drawLine(-10,-2.4,10,-2.4);drawLine(-10,2.4,-2.9,2.4);drawLine(3.7,2.4,10,2.4);drawLine(-2.9,2.4,-2.9,5.15);drawLine(3.7,2.4,3.7,5.15);drawLine(-2.9,5.15,3.7,5.15);drawControlX(this.finishX,-2.4,2.4);if(session.guide)drawGhostBay(this.bay,'侧方位');}
   };
 }
 function makeCurve(){
   const pts=[];for(let x=-10;x<=10;x+=.25){pts.push({x,y:2.25*Math.sin((x+10)/20*Math.PI*2)});} 
-  return {id:'curve',name:'曲线行驶',limit:0,spawn:{x:-11.2,y:0,h:0},step:0,stepText:['低速连续通过 S 弯，保持四轮不越道路边线'],path:pts,width:4.1,finishX:10.2,
+  return {id:'curve',name:'曲线行驶',limit:0,spawn:{x:-11.2,y:0,h:0},step:0,stepText:['低速连续通过 S 弯，保持四轮不越道路边线'],path:pts,width:4.7,finishX:10.2,
     update(){const legal=carPoints().every(p=>distToPolyline(p,this.path)<=this.width/2);if(!legal)return fail('曲线行驶：车轮压越道路边线');if(car.x>this.finishX&&car.speed>0)completeProject();},
     draw(){drawGrass();drawPathRoad(this.path,this.width);if(session.guide)drawCenterPath(this.path);drawControlX(this.finishX,-4,4);}
   };
 }
 function makeRight(){
-  return {id:'right',name:'直角转弯',limit:0,spawn:{x:-4.2,y:8.0,h:-Math.PI/2},step:0,stepText:['进入直角弯前开启右转向灯，低速完成 90° 右转'],road:[rect(-6,-10,-1.3,10),rect(-1.3,-10,10,-5.3)],finishX:7,signalChecked:false,
+  return {id:'right',name:'直角转弯',limit:0,spawn:{x:-4.2,y:8.0,h:-Math.PI/2},step:0,stepText:['进入直角弯前开启右转向灯，低速完成 90° 右转'],road:[rect(-6.3,-10.3,-1.0,10),rect(-1.0,-10.3,10,-5.0)],finishX:7,signalChecked:false,
     update(){if(!carPoints().every(p=>pointInAnyRect(p,this.road)))return fail('直角转弯：车轮压越道路边线');if(car.y<-3.5&&!this.signalChecked){this.signalChecked=true;if(signal!=='right')penalty(10,'直角转弯未开启右转向灯');}if(car.x>this.finishX&&car.y<-7&&car.speed>0)completeProject();},
-    draw(){drawGrass();drawRectRoad(this.road[0]);drawRectRoad(this.road[1]);drawLBoundary();drawControlX(this.finishX,-10,-5.3);if(session.guide)drawTextWorld('右转',-2.1,-4.6,'#ffd65a');}
+    draw(){drawGrass();drawRectRoad(this.road[0]);drawRectRoad(this.road[1]);drawLine(-6.3,10,-6.3,-10.3);drawLine(-6.3,-10.3,10,-10.3);drawLine(10,-10.3,10,-5.0);drawLine(10,-5.0,-1.0,-5.0);drawLine(-1.0,-5.0,-1.0,10);drawLine(-1.0,10,-6.3,10);drawControlX(this.finishX,-10.3,-5.0);if(session.guide)drawTextWorld('右转',-2.0,-4.3,'#ffd65a');}
   };
 }
 const makers={reverse:makeReverse,side:makeSide,curve:makeCurve,right:makeRight};
