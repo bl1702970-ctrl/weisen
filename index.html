@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>乱跑的萎缩｜C1科目二模拟考试</title>
+<title>乱跑的萎缩｜C2科目二模拟考试</title>
 <style>
 :root{
   --bg:#07110c; --panel:rgba(8,18,14,.82); --panel2:rgba(13,27,21,.9);
@@ -246,14 +246,14 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
     <div id="homeControlBar">
       <div class="home-tip">🖼点击图片暂停｜点击空白切换表情包</div>
     </div>
-    <button id="enterExamBtn">🚘 开始 C1 科目二手机模拟</button>
+    <button id="enterExamBtn">🚘 开始 C2 科目二手机模拟</button>
   </section>
 
   <section id="hud" class="hidden">
     <div class="topbar">
       <div class="hud-group">
         <div class="hud-card"><label>SCORE</label><strong id="scoreValue">100</strong></div>
-        <div class="hud-card"><label>PROJECT</label><strong id="projectValue">1 / 5</strong></div>
+        <div class="hud-card"><label>PROJECT</label><strong id="projectValue">1 / 4</strong></div>
         <div class="hud-card"><label>TIME</label><strong id="timeValue">00:00</strong></div>
       </div>
       <div class="hud-group">
@@ -325,7 +325,7 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
     <div class="legacy-controls" aria-hidden="true">
       <div class="steer-wrap"><div id="steerWheel"><div class="wheel-spoke"></div><div class="wheel-center">方向盘</div></div></div>
       <div class="signals"><button class="signal" id="leftSignal">◀ 左灯</button><button class="signal" id="rightSignal">右灯 ▶</button></div>
-      <div class="gearbox"><button class="gear" data-gear="1">1挡</button><button class="gear active" data-gear="N">N</button><button class="gear" data-gear="R">R挡</button><button class="handbrake active" id="handbrakeBtn">手刹</button></div>
+      <div class="gearbox"><button class="gear" data-gear="D">D挡</button><button class="gear active" data-gear="N">N</button><button class="gear" data-gear="R">R挡</button><button class="handbrake active" id="handbrakeBtn">手刹</button></div>
       <div class="pedals"><button class="pedal" id="clutchBtn">离合</button><button class="pedal brake" id="brakeBtn">刹车</button><button class="pedal" id="throttleBtn">油门</button></div>
     </div>
   </section>
@@ -334,7 +334,7 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
 
   <div class="overlay hidden" id="pauseOverlay"><div class="dialog"><div class="badge">PAUSED</div><h2>考试暂停</h2><p>车辆与计时均已暂停。</p><div class="dialog-actions"><button class="primary" id="resumeBtn">继续</button><button class="secondary" id="pauseQuitBtn">退出</button></div></div></div>
 
-  <div class="overlay hidden" id="resultOverlay"><div class="dialog"><div class="badge" id="resultBadge">RESULT</div><h2 id="resultTitle">考试结束</h2><p id="resultDesc"></p><div class="fail-photo-wrap" id="failPhotoWrap"><img id="failPhoto" src="66ae5595-ecf6-406b-97da-5c3377c17191.png" alt="考试不合格提示图片" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/bl1702970-ctrl/weisen/main/66ae5595-ecf6-406b-97da-5c3377c17191.png';"><div class="fail-photo-caption">考试不合格</div></div><div class="result-grid"><div class="result"><span>成绩</span><b id="finalScore">100</b></div><div class="result"><span>完成项目</span><b id="finalProject">5/5</b></div><div class="result"><span>用时</span><b id="finalTime">0:00</b></div></div><div class="penalty-list" id="penaltyList"></div><div class="dialog-actions"><button class="primary" id="retryBtn">重新开始</button><button class="secondary" id="resultQuitBtn">返回首页</button></div></div></div>
+  <div class="overlay hidden" id="resultOverlay"><div class="dialog"><div class="badge" id="resultBadge">RESULT</div><h2 id="resultTitle">考试结束</h2><p id="resultDesc"></p><div class="fail-photo-wrap" id="failPhotoWrap"><img id="failPhoto" src="66ae5595-ecf6-406b-97da-5c3377c17191.png" alt="考试不合格提示图片" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/bl1702970-ctrl/weisen/main/66ae5595-ecf6-406b-97da-5c3377c17191.png';"><div class="fail-photo-caption">考试不合格</div></div><div class="result-grid"><div class="result"><span>成绩</span><b id="finalScore">100</b></div><div class="result"><span>完成项目</span><b id="finalProject">4/4</b></div><div class="result"><span>用时</span><b id="finalTime">0:00</b></div></div><div class="penalty-list" id="penaltyList"></div><div class="dialog-actions"><button class="primary" id="retryBtn">重新开始</button><button class="secondary" id="resultQuitBtn">返回首页</button></div></div></div>
 </div>
 <script>
 // ===== 原第一网页逻辑 =====
@@ -395,7 +395,6 @@ const RULES = {
   passScore:80,
   reverseLimit:210,
   sideLimit:90,
-  rampStartLimit:30,
   stopThreshold:0.06,
   midStopSeconds:2.0,
   midStopPenalty:5
@@ -414,9 +413,9 @@ const stageTitle=$('stageTitle'), stageHint=$('stageHint'), timerFill=$('timerFi
 const speedEl=$('speedValue'), gearEl=$('gearValue'), rpmEl=$('rpmValue'), gradeEl=$('gradeValue');
 const resultOverlay=$('resultOverlay'), pauseOverlay=$('pauseOverlay');
 
+// C2 小型自动挡汽车科目二：倒车入库、侧方停车、曲线行驶、直角转弯（不考坡道定点停车和起步）
 const PROJECTS = [
   { id:'reverse', name:'倒车入库', icon:'🅿️', desc:'右倒库 → 左出库 → 左倒库 → 右出库；限时 210 秒。' },
-  { id:'ramp', name:'坡道定点停车和起步', icon:'⛰️', desc:'定点停车、手刹、半坡起步；停车后 30 秒内完成起步。' },
   { id:'side', name:'侧方停车', icon:'↩️', desc:'倒入道路右侧车位并驶出；限时 90 秒，注意转向灯。' },
   { id:'curve', name:'曲线行驶', icon:'〰️', desc:'保持车轮在 S 弯道路范围内，连续低速通过。' },
   { id:'right', name:'直角转弯', icon:'↱', desc:'控制内轮差完成 90° 右转，不压道路边线。' }
@@ -439,7 +438,7 @@ $('guideBtn').onclick=()=>{session.guide=!session.guide;$('guideBtn').style.colo
 
 /* =========================================================
    3. 手机简易输入
-   - 不需要离合/手动换挡
+   - C2 自动挡：不需要离合/手动挡位操作
    - 前进/倒车自动切换挡位
    - 停稳后自动驻车
    - 左右按住转向，松开自动回正
@@ -505,7 +504,7 @@ function resetCar(spawn){
   gear='N';handbrake=true;signal='off';engineOn=true;input.drive=0;input.brake=0;input.steer=0;touchDrive=0;touchBrake=0;turnLeftHeld=false;turnRightHeld=false;autoHoldClock=0;
   updateSteerVisual();syncControls();camera.x=car.x;camera.y=car.y;
 }
-function currentGrade(){return session.active&&session.project&&session.project.id==='ramp'&&car.x>-3&&car.x<7?0.10:0;}
+function currentGrade(){return 0;}
 function approach(v,target,amount){return v<target?Math.min(v+amount,target):Math.max(v-amount,target);}
 function updateInputs(dt){
   const keyDrive=keys['w']?1:keys['s']?-1:0;
@@ -519,7 +518,7 @@ function updateInputs(dt){
   input.steer=Math.max(-1,Math.min(1,input.steer));
   updateSteerVisual();
 
-  if(input.drive>0){gear='1';handbrake=false;}
+  if(input.drive>0){gear='D';handbrake=false;}
   else if(input.drive<0){gear='R';handbrake=false;}
   syncControls();
 }
@@ -541,7 +540,7 @@ function updateCar(dt){
     car.speed=approach(car.speed,desired,accel*dt);
     autoHoldClock=0;
   }else{
-    // 松开前进/倒车后自然减速；坡道上允许轻微后溜，便于体现半坡控制
+    // 松开前进/倒车后自然减速；C2 为自动挡，不设置坡道起步考试项目
     car.speed=approach(car.speed,0,0.72*dt);
     if(car.grade>0&&!handbrake&&Math.abs(car.speed)<.32)car.speed-=0.34*dt;
     if(Math.abs(car.speed)<.035){
@@ -589,9 +588,9 @@ function makeReverse(){
       const prev=session.prevCarX;
       if(!carPoints().every(p=>pointInAnyRect(p,this.road)))return fail('车身出线 / 车轮压越边线');
       if(this.step===0&&fullyInside(this.bay)&&Math.abs(car.speed)<RULES.stopThreshold&&gear==='R'){this.step=1;toast('右倒库完成，请从左侧驶出','ok');}
-      else if(this.step===1&&crossedX(prev,frontCenter().x,this.leftLine,-1)&&gear==='1'){this.step=2;toast('请完成左侧倒车入库','ok');}
+      else if(this.step===1&&crossedX(prev,frontCenter().x,this.leftLine,-1)&&gear==='D'){this.step=2;toast('请完成左侧倒车入库','ok');}
       else if(this.step===2&&fullyInside(this.bay)&&Math.abs(car.speed)<RULES.stopThreshold&&gear==='R'){this.step=3;toast('左倒库完成，请向右驶出','ok');}
-      else if(this.step===3&&crossedX(prev,rearCenter().x,this.rightLine,1)&&gear==='1'){completeProject();}
+      else if(this.step===3&&crossedX(prev,rearCenter().x,this.rightLine,1)&&gear==='D'){completeProject();}
       this.checkMidStop(dt);
     },
     stopClock:0,stopLatched:false,checkMidStop(dt){
@@ -609,35 +608,12 @@ function makeSide(){
       const prev=session.prevCarX;
       if(!carPoints().every(p=>pointInAnyRect(p,this.road)))return fail('侧方停车：车身出线 / 压越边线');
       if(this.step===0&&fullyInside(this.bay)&&Math.abs(car.speed)<RULES.stopThreshold){this.step=1;toast('已入库：出库前请开启左转向灯','ok');}
-      if(this.step===1){if(gear==='1'&&Math.abs(car.speed)>.1&&!this.signalChecked){this.signalChecked=true;if(signal!=='left')penalty(10,'侧方出库未使用左转向灯');}
-        if(crossedX(prev,car.x,this.finishX,-1)&&gear==='1')completeProject();}
+      if(this.step===1){if(gear==='D'&&Math.abs(car.speed)>.1&&!this.signalChecked){this.signalChecked=true;if(signal!=='left')penalty(10,'侧方出库未使用左转向灯');}
+        if(crossedX(prev,car.x,this.finishX,-1)&&gear==='D')completeProject();}
       this.checkMidStop(dt);
     },
     stopClock:0,stopLatched:false,checkMidStop(dt){if(this.step===0&&!fullyInside(this.bay)&&Math.abs(car.speed)<.025&&!handbrake){this.stopClock+=dt;if(this.stopClock>2&&!this.stopLatched){this.stopLatched=true;penalty(5,'侧方停车中途停车');}}else{this.stopClock=0;this.stopLatched=false;}},
     draw(){drawGrass();drawRectRoad(rect(-10,-2.1,10,2.1));drawRectRoad(this.bay);drawLine(-10,-2.1,10,-2.1);drawLine(-10,2.1,-2.7,2.1);drawLine(3.5,2.1,10,2.1);drawLine(-2.7,2.1,-2.7,4.75);drawLine(3.5,2.1,3.5,4.75);drawLine(-2.7,4.75,3.5,4.75);drawControlX(this.finishX,-2.1,2.1);if(session.guide)drawGhostBay(this.bay,'侧方位');}
-  };
-}
-function makeRamp(){
-  return {
-    id:'ramp',name:'坡道定点停车和起步',limit:0,spawn:{x:-10,y:0,h:0},step:0,stepText:['沿右侧边线驶上坡道，在停车线定点停车','拉紧手刹，30 秒内平稳起步并越过坡顶'],road:[rect(-12,-2.2,12,2.2)],targetX:1.0,finishX:8.0,startClock:0,stoppedX:null,startX:null,
-    update(dt){
-      if(!carPoints().every(p=>pointInAnyRect(p,this.road)))return fail('坡道项目：车轮压越道路边线');
-      if(this.step===0&&Math.abs(car.speed)<RULES.stopThreshold&&car.x>-1.0&&car.x<3.0){
-        this.stoppedX=frontCenter().x; const err=Math.abs(this.stoppedX-this.targetX);
-        const rightEdgeDist=(2.2 - Math.max(...carPoints().map(p=>p.y))); // 近似车身右侧与边线距离
-        if(err>.5)return fail('定点停车位置超出 50cm');
-        if(err>.0 && err<=.5){penalty(10,'定点停车前保险杠未准确停在目标线');}
-        if(rightEdgeDist>.5)return fail('车身距右侧边线超过 50cm');
-        if(rightEdgeDist>.3)penalty(10,'车身距右侧边线大于 30cm');
-        this.step=1;this.startClock=0;this.startX=car.x;toast('定点完成：拉手刹，30秒内起步','ok');
-      } else if(this.step===1){
-        this.startClock+=dt;
-        if(this.startClock>RULES.rampStartLimit)return fail('坡道起步超过 30 秒');
-        if(this.startX!==null && this.startX-car.x>.30)return fail('坡道起步后溜超过 30cm');
-        if(car.x>this.finishX&&car.speed>.2&&gear==='1')completeProject();
-      }
-    },
-    draw(){drawGrass();drawRectRoad(this.road[0]);drawLine(-12,-2.2,12,-2.2);drawLine(-12,2.2,12,2.2);drawSlope(-3,7,-2.2,2.2);drawStopLine(this.targetX,-2.2,2.2);drawControlX(this.finishX,-2.2,2.2);if(session.guide){drawTextWorld('停车目标线',this.targetX,-2.7,'#ffd65a');drawTextWorld('坡顶',this.finishX,-2.7,'#a9f4ca');}}
   };
 }
 function makeCurve(){
@@ -653,7 +629,7 @@ function makeRight(){
     draw(){drawGrass();drawRectRoad(this.road[0]);drawRectRoad(this.road[1]);drawLBoundary();drawControlX(this.finishX,-10,-5.3);if(session.guide)drawTextWorld('右转',-2.1,-4.6,'#ffd65a');}
   };
 }
-const makers={reverse:makeReverse,ramp:makeRamp,side:makeSide,curve:makeCurve,right:makeRight};
+const makers={reverse:makeReverse,side:makeSide,curve:makeCurve,right:makeRight};
 
 /* =========================================================
    7. Session / 计分
@@ -662,7 +638,7 @@ const session={active:false,running:false,paused:false,mode:'exam',projectIndex:
 function startSession(mode,index){
   session.active=true;session.running=true;session.paused=false;session.mode=mode;session.projectIndex=index;session.score=100;session.totalTime=0;session.penalties=[];session.failed=false;session.completed=0;session.guide=true;
   homePage.style.display='none';canvas.style.display='block';hud.classList.remove('hidden');controls.classList.remove('hidden');resultOverlay.classList.add('hidden');pauseOverlay.classList.add('hidden');const failPhotoWrap=$('failPhotoWrap');if(failPhotoWrap)failPhotoWrap.classList.remove('show');
-  loadProject(index); modeTag.textContent=mode==='exam'?'手机简易模拟':'单项练习'; $('guideBtn').style.color=session.guide?'var(--green)':'';
+  loadProject(index); modeTag.textContent=mode==='exam'?'C2 自动挡模拟':'单项练习'; $('guideBtn').style.color=session.guide?'var(--green)':'';
 }
 function loadProject(index){session.projectIndex=index;const def=PROJECTS[index];session.project=makers[def.id]();session.projectTime=0;resetCar(session.project.spawn);session.prevCarX=car.x;updateHUD();toast(`开始：${session.project.name}`,'ok');}
 function penalty(points,reason){if(session.failed)return;session.score=Math.max(0,session.score-points);session.penalties.push({points,reason});updateHUD();if(session.mode==='exam'&&session.score<RULES.passScore)fail('累计扣分后成绩低于 80 分');}
@@ -681,7 +657,7 @@ function showResult(pass,desc){
   if(failPhotoWrap){
     failPhotoWrap.classList.toggle('show',!pass);
   }
-  $('finalScore').textContent=session.score; $('finalProject').textContent=session.mode==='exam'?`${session.completed}/5`:'1/1'; $('finalTime').textContent=formatTime(session.totalTime);
+  $('finalScore').textContent=session.score; $('finalProject').textContent=session.mode==='exam'?`${session.completed}/${PROJECTS.length}`:'1/1'; $('finalTime').textContent=formatTime(session.totalTime);
   $('penaltyList').innerHTML=session.penalties.length?session.penalties.map(p=>`<div class="penalty-item"><span>${p.reason}</span><b>-${p.points}</b></div>`).join(''):'<div class="penalty-item"><span>无扣分记录</span><b style="color:#8ff0ba">0</b></div>';
   resultOverlay.classList.remove('hidden');
 }
@@ -691,7 +667,7 @@ function formatTime(sec){const m=Math.floor(sec/60),s=Math.floor(sec%60);return 
 function toast(text,type=''){const el=$('toast');el.textContent=text;el.className=`show ${type}`;clearTimeout(toast.t);toast.t=setTimeout(()=>el.className='',1800);}
 function updateHUD(){
   scoreEl.textContent=session.score;scoreEl.className=session.score>=90?'good':session.score>=80?'warn':'bad';
-  projectEl.textContent=session.mode==='exam'?`${session.projectIndex+1} / 5`:'练习'; timeEl.textContent=formatTime(session.totalTime);
+  projectEl.textContent=session.mode==='exam'?`${session.projectIndex+1} / ${PROJECTS.length}`:'练习'; timeEl.textContent=formatTime(session.totalTime);
   if(session.project){stageTitle.textContent=session.project.name;stageHint.textContent=session.project.stepText?.[session.project.step]||'';const lim=session.project.limit||0;timerFill.style.width=lim?`${Math.max(0,100*(1-session.projectTime/lim))}%`:'100%';timerFill.style.background=lim&&session.projectTime>lim*.8?'var(--red)':'var(--green)';}
   speedEl.textContent=(Math.abs(car.speed)*3.6).toFixed(1);gearEl.textContent=gear;rpmEl.textContent=Math.round(car.rpm);gradeEl.textContent=Math.round(car.grade*100)+'%';
 }
