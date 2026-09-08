@@ -29,42 +29,59 @@ body{
 #photo img{width:100%;height:100%;object-fit:cover;}
 #title{
   position:fixed;top:24px;width:100%;text-align:center;
-  color:rgba(255,255,255,0.65);font-size:16px;letter-spacing:2px;pointer-events:none;
+  color:rgba(255,255,255,0.65);font-size:15px;letter-spacing:1px;pointer-events:none;
 }
 #controlBar{
   position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
   display:flex;gap:14px;align-items:center;z-index:100;
 }
 .tip-btn{
-  color:#fff;font-size:14px;background:rgba(255,255,255,0.12);
+  color:#fff;font-size:13px;background:rgba(255,255,255,0.12);
   backdrop-filter:blur(10px);padding:12px 22px;border-radius:999px;
   border:1px solid rgba(255,255,255,0.18);
 }
 </style>
 </head>
 <body>
-<div id="title">👹 乱跑表情包 · 点击图片暂停</div>
+<div id="title">👹乱跑的萎缩｜点图片暂停，点空白切换图片</div>
 <div id="photo">
-  <img src="f57b7468deb628469350c27aad31d26e.png" alt="表情包">
+  <img id="imgEl" src="f57b7468deb628469350c27aad31d26e.png" alt="表情包">
 </div>
 <div id="controlBar">
-  <div class="tip-btn">点击图片暂停 / 继续运动</div>
+  <div class="tip-btn">🖼点击图片暂停｜点击空白切换表情包</div>
 </div>
 
 <script>
 const photo = document.getElementById("photo");
+const imgEl = document.getElementById("imgEl");
+
+//你的仓库全部三张图片文件名
+const imgList = [
+  "f57b7468deb628469350c27aad31d26e.png",
+  "10067dde-a329-416b-b6f4-98d5ee70d8ea.png",
+  "5706dfe1-7d73-45e1-8f2a-95de54c2d788.png"
+];
+let currentImgIndex = 0;
+
 let posX = window.innerWidth*0.12;
 let posY = window.innerHeight*0.12;
 let velX = (Math.random()*2.8+1.2)*(Math.random()>0.5?1:-1);
 let velY = (Math.random()*2.8+1.2)*(Math.random()>0.5?1:-1);
 let running = true;
 
-//点击切换暂停
-photo.onclick = ()=>{
+//点击图片：暂停/继续
+photo.onclick = (e)=>{
+  e.stopPropagation(); //阻止事件冒泡，不会触发切换图片
   running = !running;
 };
 
-//生成碰撞闪光
+//点击页面空白处切换图片
+document.body.onclick = ()=>{
+  currentImgIndex = (currentImgIndex +1) % imgList.length;
+  imgEl.src = imgList[currentImgIndex];
+};
+
+//碰撞闪光
 function createSpark(x,y){
   const s = document.createElement("div");
   s.className = "spark";
@@ -102,7 +119,7 @@ function loop(){
 }
 loop();
 
-//窗口大小改变重新适配
+//窗口缩放适配
 window.addEventListener("resize",()=>{
   const w = photo.offsetWidth;
   const h = photo.offsetHeight;
