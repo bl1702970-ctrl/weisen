@@ -2,137 +2,113 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>随机运动照片</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>乱跑表情包</title>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  width:100vw;height:100vh;overflow:hidden;
+  background:radial-gradient(circle at 20% 10%,#2b1b35 0%,#121218 50%,#050508 100%);
+  font-family:system-ui,sans-serif;
 }
-
-body {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
-  touch-action: manipulation;
+.spark{
+  position:absolute;width:60px;height:60px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,210,80,0.6) 0%,transparent 70%);
+  pointer-events:none;
+  animation:sparkAnim 0.45s ease-out forwards;
 }
-
-#photo {
-  position: absolute;
-  width: 28vmin;
-  height: 28vmin;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  cursor: pointer;
-  user-select: none;
+@keyframes sparkAnim{
+  0%{transform:scale(0.2);opacity:0.9;}
+  100%{transform:scale(2.2);opacity:0;}
 }
-
-#photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+#photo{
+  position:absolute;width:30vmin;height:30vmin;
+  border-radius:22px;overflow:hidden;cursor:pointer;user-select:none;
+  box-shadow:0 0 40px rgba(255,180,80,0.32),0 12px 40px rgba(0,0,0,0.7);
 }
-
-#tip {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 14px;
-  font-family: Arial, "Microsoft YaHei", sans-serif;
-  background: rgba(0, 0, 0, 0.45);
-  padding: 10px 18px;
-  border-radius: 999px;
-  pointer-events: none;
+#photo img{width:100%;height:100%;object-fit:cover;}
+#title{
+  position:fixed;top:24px;width:100%;text-align:center;
+  color:rgba(255,255,255,0.65);font-size:16px;letter-spacing:2px;pointer-events:none;
+}
+#controlBar{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  display:flex;gap:14px;align-items:center;z-index:100;
+}
+.tip-btn{
+  color:#fff;font-size:14px;background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(10px);padding:12px 22px;border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
 }
 </style>
 </head>
 <body>
-
+<div id="title">👹 乱跑表情包 · 点击图片暂停</div>
 <div id="photo">
-  <!-- 这里就是你仓库里真实图片完整名字，一字不差 -->
-  <img src="f57b7468deb628469350c27aad31d26e.png" alt="照片" />
+  <img src="f57b7468deb628469350c27aad31d26e.png" alt="表情包">
 </div>
-
-<div id="tip">点击照片暂停 / 继续</div>
+<div id="controlBar">
+  <div class="tip-btn">点击图片暂停 / 继续运动</div>
+</div>
 
 <script>
 const photo = document.getElementById("photo");
-
-let posX = window.innerWidth * 0.1;
-let posY = window.innerHeight * 0.1;
-let velX = (Math.random() * 2.5 + 1.5) * (Math.random() > 0.5 ? 1 : -1);
-let velY = (Math.random() * 2.5 + 1.5) * (Math.random() > 0.5 ? 1 : -1);
+let posX = window.innerWidth*0.12;
+let posY = window.innerHeight*0.12;
+let velX = (Math.random()*2.8+1.2)*(Math.random()>0.5?1:-1);
+let velY = (Math.random()*2.8+1.2)*(Math.random()>0.5?1:-1);
 let running = true;
 
-function update() {
-  if (!running) return;
-
-  posX += velX;
-  posY += velY;
-
-  const maxX = window.innerWidth - photo.clientWidth;
-  const maxY = window.innerHeight - photo.clientHeight;
-
-  if (posX <= 0) {
-    posX = 0;
-    velX = Math.abs(velX);
-    randomSpeed();
-  }
-
-  if (posX >= maxX) {
-    posX = maxX;
-    velX = -Math.abs(velX);
-    randomSpeed();
-  }
-
-  if (posY <= 0) {
-    posY = 0;
-    velY = Math.abs(velY);
-    randomSpeed();
-  }
-
-  if (posY >= maxY) {
-    posY = maxY;
-    velY = -Math.abs(velY);
-    randomSpeed();
-  }
-
-  photo.style.transform = `translate(${posX}px, ${posY}px)`;
-  requestAnimationFrame(update);
-}
-
-function randomSpeed() {
-  const change = Math.random() * 0.6 + 0.7;
-  velX *= change;
-  velY *= change;
-
-  const maxSpeed = 5.5;
-  const minSpeed = 0.8;
-
-  velX = Math.max(minSpeed, Math.min(maxSpeed, Math.abs(velX))) * (velX < 0 ? -1 : 1);
-  velY = Math.max(minSpeed, Math.min(maxSpeed, Math.abs(velY))) * (velY < 0 ? -1 : 1);
-}
-
-photo.addEventListener("click", () => {
+//点击切换暂停
+photo.onclick = ()=>{
   running = !running;
-  if (running) update();
-});
+};
 
-window.addEventListener("resize", () => {
-  const maxX = window.innerWidth - photo.clientWidth;
-  const maxY = window.innerHeight - photo.clientHeight;
-  posX = Math.min(posX, maxX);
-  posY = Math.min(posY, maxY);
-});
+//生成碰撞闪光
+function createSpark(x,y){
+  const s = document.createElement("div");
+  s.className = "spark";
+  s.style.left = x+"px";
+  s.style.top = y+"px";
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),450);
+}
 
-update();
+function loop(){
+  if(running){
+    const w = photo.offsetWidth;
+    const h = photo.offsetHeight;
+    let hit = false;
+
+    posX += velX;
+    posY += velY;
+
+    //左右边界
+    if(posX <=0){ posX=0;velX=-velX;hit=true; }
+    if(posX+w >= window.innerWidth){ posX = window.innerWidth - w; velX=-velX; hit=true; }
+
+    //上下边界
+    if(posY <=0){ posY=0; velY=-velY; hit=true; }
+    if(posY+h >= window.innerHeight){ posY = window.innerHeight - h; velY=-velY; hit=true; }
+
+    if(hit){
+      createSpark(posX+w/2, posY+h/2);
+    }
+
+    photo.style.left = posX+"px";
+    photo.style.top = posY+"px";
+  }
+  requestAnimationFrame(loop);
+}
+loop();
+
+//窗口大小改变重新适配
+window.addEventListener("resize",()=>{
+  const w = photo.offsetWidth;
+  const h = photo.offsetHeight;
+  if(posX+w>window.innerWidth) posX = window.innerWidth -w;
+  if(posY+h>window.innerHeight) posY = window.innerHeight -h;
+})
 </script>
-
 </body>
 </html>
