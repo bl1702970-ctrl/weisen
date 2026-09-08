@@ -452,7 +452,7 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
         <div class="rules-item"><b>操作方式</b><p>左侧控制方向，右侧控制前进、刹车、倒车；松开方向会自动回正。</p></div>
         <div class="rules-item"><b>复活机制</b><p>全程共有 3 次复活，碰线后会消耗 1 次，并返回当前项目起点重新开始。</p></div>
       </div>
-      <div class="rules-note"><strong>温馨提示：</strong>四个项目已串联为一张连续地图：完成当前项目后直接向前驶往下一个考区，不再传送。侧方停车区域进一步加宽，转向灯已修复为即时点按生效。</div>
+      <div class="rules-note"><strong>温馨提示：</strong>四个项目已串联为一张连续地图：完成当前项目后沿连接道路前进，车辆越过蓝色虚线后才自动感应并开始下一项考试。侧方停车已补充清晰虚线，转向灯即时点按生效。</div>
       <div class="dialog-actions">
         <button class="secondary" id="rulesBackBtn">返回首页</button>
         <button class="primary" id="rulesStartBtn">我知道了，开始考试</button>
@@ -849,7 +849,11 @@ const MAP={
   connector2:rect(40.0,-2.6,43.0,2.6),
   curveWidth:5.0,
   rightH:rect(68.0,-2.65,84.0,2.65),
-  rightV:rect(78.7,0.0,84.0,18.5)
+  rightV:rect(78.7,0.0,84.0,18.5),
+  // 连续考试感应线：车辆越线后才正式进入下一项考试
+  gateSideX:20.5,
+  gateCurveX:42.65,
+  gateRightX:71.15
 };
 MAP.curve=[];
 for(let x=42.0;x<=70.2;x+=.24){
@@ -869,7 +873,7 @@ function drawArrow(x,y,ang,label='前往下一考区'){
   if(session.guide)drawTextWorld(label,x,y-.48,'rgba(180,255,213,.75)');
 }
 function drawMapLabel(text,x,y,index){
-  const active=session.projectIndex===index;
+  const active=(session.transition?session.transition.nextIndex:session.projectIndex)===index;
   const done=session.completed>index;
   drawTextWorld(`${done?'✓ ':active?'▶ ':''}${text}`,x,y,active?'#8ff0ba':done?'rgba(180,255,213,.62)':'rgba(255,255,255,.45)');
 }
@@ -886,22 +890,30 @@ function drawFullMap(){
   drawRectRoad(MAP.sideLane);drawRectRoad(MAP.sideBay);
   drawLine(18,-2.75,42,-2.75);drawLine(18,2.75,24.8,2.75);drawLine(33.8,2.75,42,2.75);
   drawLine(24.8,2.75,24.8,6.35);drawLine(33.8,2.75,33.8,6.35);drawLine(24.8,6.35,33.8,6.35);
+  // 第二关入口感应线：蓝色虚线，车辆越过即激活侧方停车考试
+  drawDashedLine(MAP.gateSideX,-2.75,MAP.gateSideX,2.75,'#6bc5ff',.09,[.28,.16]);
+  // 侧方停车车位开口与车位内部增加虚线，手机上更容易识别
+  drawDashedLine(24.8,2.75,33.8,2.75,'rgba(255,255,255,.82)',.07,[.24,.17]);
+  drawDashedRect(rect(25.05,3.02,33.55,6.08),'rgba(255,255,255,.68)',.05);
   drawControlX(36.4,-2.75,2.75);drawControlX(40.5,-2.75,2.75);
   // 第二段连接道路
   drawRectRoad(MAP.connector2);drawLine(40,-2.6,43,-2.6);drawLine(40,2.6,43,2.6);drawArrow(41.5,0,0);
+  drawDashedLine(MAP.gateCurveX,-2.6,MAP.gateCurveX,2.6,'#6bc5ff',.09,[.28,.16]);
   // 曲线行驶
   drawPathRoad(MAP.curve,MAP.curveWidth);if(session.guide)drawCenterPath(MAP.curve);drawControlX(70.0,-4.0,4.0);
   // 直角转弯
   drawRectRoad(MAP.rightH);drawRectRoad(MAP.rightV);
+  drawDashedLine(MAP.gateRightX,-2.65,MAP.gateRightX,2.65,'#6bc5ff',.09,[.28,.16]);
   drawLine(68,-2.65,84,-2.65);drawLine(68,2.65,78.7,2.65);drawLine(84,-2.65,84,18.5);drawLine(78.7,2.65,78.7,18.5);drawLine(78.7,18.5,84,18.5);
   drawControlX(70.6,-2.65,2.65);
   ctx.save();ctx.setLineDash([.25,.18]);drawLine(78.7,14.5,84.0,14.5,'#f5f5f5',.06);ctx.restore();
   // 地图标识
   drawMapLabel('① 倒车入库',0,-4.35,0);
   drawMapLabel('② 侧方停车',29,-3.45,1);
+  if(session.guide)drawTextWorld('感应线',MAP.gateSideX,-3.15,'#8fdcff');
   drawMapLabel('③ 曲线行驶',55,-5.0,2);
   drawMapLabel('④ 直角转弯',81,19.25,3);
-  if(session.guide&&session.projectIndex===1)drawGhostBay(MAP.sideBay,'加宽侧方位');
+  if(session.guide&&((session.transition&&session.transition.nextIndex===1)||(!session.transition&&session.projectIndex===1)))drawGhostBay(MAP.sideBay,'加宽侧方位');
   if(session.guide&&session.projectIndex===0)drawGhostBay(MAP.reverseBay,'倒车库');
 }
 
@@ -989,9 +1001,9 @@ const makers={reverse:makeReverse,side:makeSide,curve:makeCurve,right:makeRight}
 /* =========================================================
    7. Session / 计分
 ========================================================= */
-const session={active:false,running:false,paused:false,mode:'exam',projectIndex:0,project:null,score:100,totalTime:0,projectTime:0,penalties:[],guide:false,prevCarX:0,failed:false,completed:0,revives:RULES.maxRevives,reviving:false};
+const session={active:false,running:false,paused:false,mode:'exam',projectIndex:0,project:null,score:100,totalTime:0,projectTime:0,penalties:[],guide:false,prevCarX:0,failed:false,completed:0,revives:RULES.maxRevives,reviving:false,transition:null};
 function startSession(mode,index){
-  session.active=true;session.running=true;session.paused=false;session.mode=mode;session.projectIndex=index;session.score=100;session.totalTime=0;session.penalties=[];session.failed=false;session.completed=0;session.revives=RULES.maxRevives;session.reviving=false;session.guide=true;
+  session.active=true;session.running=true;session.paused=false;session.mode=mode;session.projectIndex=index;session.score=100;session.totalTime=0;session.penalties=[];session.failed=false;session.completed=0;session.revives=RULES.maxRevives;session.reviving=false;session.transition=null;session.guide=true;
   homePage.style.display='none';canvas.style.display='block';hud.classList.remove('hidden');controls.classList.remove('hidden');resultOverlay.classList.add('hidden');pauseOverlay.classList.add('hidden');reviveOverlay.classList.add('hidden');const failPhotoWrap=$('failPhotoWrap');if(failPhotoWrap)failPhotoWrap.classList.remove('show');
   loadProject(index,true); modeTag.textContent=mode==='exam'?'C2 连续考场':'单项练习'; $('guideBtn').style.color=session.guide?'var(--green)':'';
 }
@@ -1000,16 +1012,39 @@ function loadProject(index,reset=true){
   if(reset){const sp=session.project.spawn||session.project.respawn;resetCar(sp);}
   session.prevCarX=car.x;updateHUD();toast(`开始：${session.project.name}`,'ok');
 }
-function advanceProject(){
-  const next=session.projectIndex+1;
-  if(next>=PROJECTS.length)return;
-  session.projectIndex=next;
-  session.project=makers[PROJECTS[next].id]();
+function gateForProject(index){
+  if(index===1)return {x:MAP.gateSideX,name:'侧方停车',respawn:{x:12.0,y:0,h:0}};
+  if(index===2)return {x:MAP.gateCurveX,name:'曲线行驶',respawn:{x:40.8,y:0,h:0}};
+  if(index===3)return {x:MAP.gateRightX,name:'直角转弯',respawn:{x:69.8,y:0,h:0}};
+  return null;
+}
+function startTransition(next){
+  const gate=gateForProject(next);
+  if(!gate)return;
+  session.transition={nextIndex:next,gateX:gate.x,name:gate.name,respawn:gate.respawn};
   session.projectTime=0;
   session.prevCarX=car.x;
-  // 连续地图：保留车辆位置、朝向、速度，不重置
   updateHUD();
-  toast(`第 ${next} 项完成，继续向前：${session.project.name}`,'ok');
+  toast(`继续向前，越过蓝色感应线进入：${gate.name}`,'ok');
+}
+function activateNextProject(){
+  if(!session.transition)return;
+  const next=session.transition.nextIndex;
+  session.transition=null;
+  loadProject(next,false);
+  if(navigator.vibrate)navigator.vibrate(40);
+  toast(`已感应进入：${session.project.name}`,'ok');
+}
+function updateTransition(){
+  if(!session.transition)return;
+  if(!enforceMap('连接道路：车轮压越边线'))return;
+  // 用车头和车身中心双重判定，防止手机低帧率时“跨过”感应线而漏判
+  const gateX=session.transition.gateX;
+  const fc=frontCenter();
+  const maxCornerX=Math.max(...carPoints().map(p=>p.x));
+  if(fc.x>=gateX || maxCornerX>=gateX || car.x>=gateX){
+    activateNextProject();
+  }
 }
 function lineHit(reason){
   if(session.failed||session.reviving||!session.running)return;
@@ -1033,8 +1068,14 @@ function lineHit(reason){
     reviveOverlay.classList.add('hidden');
     session.reviving=false;
     session.running=true;
-    loadProject(session.projectIndex,true);
-    toast(`已返回 ${session.project.name} 起点，重新考试`,'ok');
+    if(session.transition){
+      resetCar(session.transition.respawn);
+      session.prevCarX=car.x;
+      toast(`已返回连接路段，继续前往 ${session.transition.name}`,'ok');
+    }else{
+      loadProject(session.projectIndex,true);
+      toast(`已返回 ${session.project.name} 起点，重新考试`,'ok');
+    }
   },RULES.reviveDelay);
 }
 function penalty(points,reason){if(session.failed)return;session.score=Math.max(0,session.score-points);session.penalties.push({points,reason});updateHUD();if(session.mode==='exam'&&session.score<RULES.passScore)fail('累计扣分后成绩低于 80 分');}
@@ -1047,8 +1088,8 @@ function completeProject(){
   if(session.mode==='practice'){session.running=false;setTimeout(()=>showResult(true,'单项练习完成'),500);return;}
   if(session.projectIndex>=PROJECTS.length-1){session.running=false;setTimeout(()=>showResult(session.score>=RULES.passScore,'全部项目完成'),650);}
   else{
-    // 连续地图：不停车、不传送，直接激活下一考区
-    advanceProject();
+    // 连续地图：完成当前项目后先进入连接路段，越过下一关感应线才正式激活考试
+    startTransition(session.projectIndex+1);
   }
 }
 function showResult(pass,desc){
@@ -1062,14 +1103,18 @@ function showResult(pass,desc){
   $('penaltyList').innerHTML=session.penalties.length?session.penalties.map(p=>`<div class="penalty-item"><span>${p.reason}</span><b>-${p.points}</b></div>`).join(''):'<div class="penalty-item"><span>无扣分记录</span><b style="color:#8ff0ba">0</b></div>';
   resultOverlay.classList.remove('hidden');
 }
-function quitToMenu(){session.active=false;session.running=false;session.paused=false;session.reviving=false;homePage.style.display='block';canvas.style.display='none';hud.classList.add('hidden');controls.classList.add('hidden');pauseOverlay.classList.add('hidden');resultOverlay.classList.add('hidden');reviveOverlay.classList.add('hidden');$('rulesOverlay')?.classList.add('hidden');}
+function quitToMenu(){session.active=false;session.running=false;session.paused=false;session.reviving=false;session.transition=null;homePage.style.display='block';canvas.style.display='none';hud.classList.add('hidden');controls.classList.add('hidden');pauseOverlay.classList.add('hidden');resultOverlay.classList.add('hidden');reviveOverlay.classList.add('hidden');$('rulesOverlay')?.classList.add('hidden');}
 function setPause(v){if(!session.active)return;session.paused=v;pauseOverlay.classList.toggle('hidden',!v);}
 function formatTime(sec){const m=Math.floor(sec/60),s=Math.floor(sec%60);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
 function toast(text,type=''){const el=$('toast');el.textContent=text;el.className=`show ${type}`;clearTimeout(toast.t);toast.t=setTimeout(()=>el.className='',1800);}
 function updateHUD(){
   scoreEl.textContent=session.score;scoreEl.className=session.score>=90?'good':session.score>=80?'warn':'bad';
-  projectEl.textContent=session.mode==='exam'?`${session.projectIndex+1} / ${PROJECTS.length}`:'练习'; reviveEl.textContent=`×${session.revives}`; reviveEl.style.color=session.revives>1?'#8fdcff':session.revives===1?'#ffd65a':'#ff7b81'; timeEl.textContent=formatTime(session.totalTime);
-  if(session.project){stageTitle.textContent=session.project.name;stageHint.textContent=session.project.stepText?.[session.project.step]||'';const lim=session.project.limit||0;timerFill.style.width=lim?`${Math.max(0,100*(1-session.projectTime/lim))}%`:'100%';timerFill.style.background=lim&&session.projectTime>lim*.8?'var(--red)':'var(--green)';}
+  projectEl.textContent=session.mode==='exam'?`${(session.transition?session.transition.nextIndex:session.projectIndex)+1} / ${PROJECTS.length}`:'练习'; reviveEl.textContent=`×${session.revives}`; reviveEl.style.color=session.revives>1?'#8fdcff':session.revives===1?'#ffd65a':'#ff7b81'; timeEl.textContent=formatTime(session.totalTime);
+  if(session.transition){
+    stageTitle.textContent=`前往 ${session.transition.name}`;
+    stageHint.textContent='继续向前行驶，车辆越过蓝色虚线后自动开始下一项考试';
+    timerFill.style.width='100%';timerFill.style.background='#6bc5ff';
+  }else if(session.project){stageTitle.textContent=session.project.name;stageHint.textContent=session.project.stepText?.[session.project.step]||'';const lim=session.project.limit||0;timerFill.style.width=lim?`${Math.max(0,100*(1-session.projectTime/lim))}%`:'100%';timerFill.style.background=lim&&session.projectTime>lim*.8?'var(--red)':'var(--green)';}
   speedEl.textContent=(Math.abs(car.speed)*3.6).toFixed(1);gearEl.textContent=gear;rpmEl.textContent=Math.round(car.rpm);gradeEl.textContent=Math.round(car.grade*100)+'%';
 }
 
@@ -1083,6 +1128,8 @@ function drawGrass(){ctx.fillStyle='#173722';ctx.fillRect(camera.x-30,camera.y-2
 function drawRectRoad(r){ctx.fillStyle='#424944';ctx.fillRect(r.x1,r.y1,r.x2-r.x1,r.y2-r.y1);ctx.fillStyle='rgba(255,255,255,.02)';for(let x=r.x1;x<r.x2;x+=.7)ctx.fillRect(x,r.y1,.012,r.y2-r.y1)}
 function drawLine(x1,y1,x2,y2,color='#f1cf54',w=.08){ctx.strokeStyle=color;ctx.lineWidth=w;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
 function drawControlX(x,y1,y2){ctx.save();ctx.setLineDash([.25,.18]);drawLine(x,y1,x,y2,'#f5f5f5',.06);ctx.restore()}
+function drawDashedLine(x1,y1,x2,y2,color='#f5f5f5',w=.07,dash=[.24,.18]){ctx.save();ctx.setLineDash(dash);drawLine(x1,y1,x2,y2,color,w);ctx.restore()}
+function drawDashedRect(r,color='rgba(245,245,245,.78)',w=.055){ctx.save();ctx.strokeStyle=color;ctx.lineWidth=w;ctx.setLineDash([.22,.16]);ctx.strokeRect(r.x1,r.y1,r.x2-r.x1,r.y2-r.y1);ctx.restore()}
 function drawStopLine(x,y1,y2){drawLine(x,y1,x,y2,'#ffd65a',.14)}
 function drawGhostBay(r,label){ctx.save();ctx.fillStyle='rgba(72,229,150,.07)';ctx.fillRect(r.x1,r.y1,r.x2-r.x1,r.y2-r.y1);ctx.strokeStyle='rgba(72,229,150,.4)';ctx.lineWidth=.04;ctx.setLineDash([.15,.12]);ctx.strokeRect(r.x1,r.y1,r.x2-r.x1,r.y2-r.y1);ctx.restore();drawTextWorld(label,(r.x1+r.x2)/2,(r.y1+r.y2)/2,'rgba(180,255,213,.75)')}
 function drawTextWorld(t,x,y,color='#fff'){ctx.save();ctx.scale(1/camera.scale,1/camera.scale);ctx.font='700 11px sans-serif';ctx.fillStyle=color;ctx.textAlign='center';ctx.fillText(t,x*camera.scale,y*camera.scale);ctx.restore()}
@@ -1128,7 +1175,18 @@ let last=performance.now();
 function frame(now){
   const dt=Math.min(.04,(now-last)/1000);last=now;
   if(session.active&&!session.paused){
-    if(session.running){session.totalTime+=dt;session.projectTime+=dt;session.prevCarX=car.x;updateCar(dt);session.project.update(dt);if(session.project.limit&&session.projectTime>session.project.limit)fail(`${session.project.name} 超过规定时间`);}
+    if(session.running){
+      session.totalTime+=dt;
+      session.prevCarX=car.x;
+      updateCar(dt);
+      if(session.transition){
+        updateTransition();
+      }else{
+        session.projectTime+=dt;
+        session.project.update(dt);
+        if(session.project.limit&&session.projectTime>session.project.limit)fail(`${session.project.name} 超过规定时间`);
+      }
+    }
     updateHUD();
   }
   drawScene();requestAnimationFrame(frame);
