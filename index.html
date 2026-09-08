@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>乱跑的萎缩｜C1科目二模拟考试</title>
+<title>乱跑表情包｜C1科目二模拟考试</title>
 <style>
 :root{
   --bg:#07110c; --panel:rgba(8,18,14,.82); --panel2:rgba(13,27,21,.9);
@@ -116,6 +116,56 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
 #enterExamBtn:hover{transform:translateX(-50%) translateY(-2px)}
 #game{display:none}
 
+
+/* ===== 手机精致简易驾驶 UI ===== */
+.legacy-controls{display:none!important}
+.mobile-drive-ui{position:absolute;left:12px;right:12px;bottom:max(74px,calc(env(safe-area-inset-bottom) + 62px));display:flex;justify-content:space-between;align-items:flex-end;gap:12px;pointer-events:none}
+.simple-card{pointer-events:auto;padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:linear-gradient(180deg,rgba(11,19,16,.84),rgba(6,12,10,.72));backdrop-filter:blur(18px);box-shadow:0 16px 44px rgba(0,0,0,.30),inset 0 1px rgba(255,255,255,.06)}
+.pad-label{text-align:center;color:rgba(255,255,255,.42);font-size:9px;letter-spacing:1.5px;margin:0 0 7px}
+.steer-row,.drive-row{display:flex;align-items:center;gap:7px}
+.steer-key,.center-key,.drive-key{border:1px solid rgba(255,255,255,.11);background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.035));color:#fff;box-shadow:inset 0 1px rgba(255,255,255,.05);touch-action:none;cursor:pointer}
+.steer-key{width:76px;height:76px;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.steer-key .steer-icon{font-size:32px;line-height:1}.steer-key small,.center-key small{font-size:10px;color:rgba(255,255,255,.62)}
+.steer-key.active{transform:translateY(2px) scale(.98);border-color:rgba(107,197,255,.55);background:linear-gradient(180deg,rgba(76,164,255,.26),rgba(76,164,255,.08));box-shadow:0 0 28px rgba(76,164,255,.12)}
+.center-key{width:58px;height:76px;border-radius:18px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px}
+.steer-meter{position:relative;width:36px;height:7px;border-radius:99px;background:rgba(255,255,255,.10);overflow:visible}
+.steer-meter:after{content:"";position:absolute;left:50%;top:-3px;width:1px;height:13px;background:rgba(255,255,255,.35)}
+.steer-meter i{position:absolute;top:-2px;left:50%;width:11px;height:11px;border-radius:50%;background:#6bc5ff;box-shadow:0 0 14px rgba(107,197,255,.65);transform:translateX(-50%);transition:left .06s linear}
+.drive-key{width:76px;height:76px;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.drive-key span{font-size:19px;line-height:1}.drive-key b{font-size:12px}
+.drive-key.forward{border-color:rgba(72,229,150,.18)}
+.drive-key.reverse{border-color:rgba(107,197,255,.18)}
+.drive-key.brake{border-color:rgba(255,95,101,.18)}
+.drive-key.forward.active{transform:translateY(2px);background:linear-gradient(180deg,rgba(72,229,150,.28),rgba(72,229,150,.08));border-color:rgba(72,229,150,.55);box-shadow:0 0 28px rgba(72,229,150,.12)}
+.drive-key.reverse.active{transform:translateY(2px);background:linear-gradient(180deg,rgba(107,197,255,.27),rgba(107,197,255,.08));border-color:rgba(107,197,255,.52)}
+.drive-key.brake.active{transform:translateY(2px);background:linear-gradient(180deg,rgba(255,95,101,.30),rgba(255,95,101,.09));border-color:rgba(255,95,101,.58)}
+.quick-strip{position:absolute;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;align-items:center;gap:7px;pointer-events:auto;padding:6px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(4,9,7,.72);backdrop-filter:blur(16px);box-shadow:0 12px 32px rgba(0,0,0,.26)}
+.quick-btn{height:38px;padding:0 11px;border-radius:11px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.055);font-size:10px;font-weight:800;color:rgba(255,255,255,.74);touch-action:manipulation}
+.quick-btn.active{color:#ffd65a;border-color:rgba(255,214,90,.4);background:rgba(255,214,90,.12)}
+.quick-btn.park.active{color:#fff;border-color:rgba(255,95,101,.5);background:rgba(255,95,101,.18)}
+.gear-pill{height:38px;min-width:45px;border-radius:11px;border:1px solid rgba(72,229,150,.18);display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(72,229,150,.08)}
+.gear-pill span{font-size:15px;font-weight:900;color:#8ff0ba;line-height:1}.gear-pill small{font-size:7px;color:rgba(255,255,255,.38);margin-top:2px}
+.mobile-help{position:absolute;left:50%;bottom:max(132px,calc(env(safe-area-inset-bottom) + 120px));transform:translateX(-50%);font-size:9px;color:rgba(255,255,255,.42);white-space:nowrap;padding:6px 10px;border-radius:99px;background:rgba(0,0,0,.22);pointer-events:none}
+.stage-panel{max-width:330px;padding:11px 13px}.stage-panel h2{font-size:16px}.stage-panel p{font-size:10px}
+.topbar .hud-card{min-width:70px;padding:7px 9px}.topbar .hud-card strong{font-size:14px}.topbar .hud-card label{font-size:8px}
+.icon{width:40px;height:40px;border-radius:12px}.telemetry{display:none}
+#guideBtn{font-size:0}#guideBtn:after{content:"辅助";font-size:9px;font-weight:800}
+@media (orientation:portrait) and (max-width:700px){
+  .mobile-drive-ui{bottom:max(84px,calc(env(safe-area-inset-bottom) + 72px));gap:8px}
+  .simple-card{padding:8px;border-radius:19px}
+  .steer-key,.drive-key{width:64px;height:68px;border-radius:19px}.center-key{width:48px;height:68px}
+  .steer-key .steer-icon{font-size:27px}.drive-key span{font-size:17px}.drive-key b{font-size:11px}
+  .quick-strip{bottom:max(12px,env(safe-area-inset-bottom));gap:4px;padding:5px}.quick-btn{height:34px;padding:0 8px}.gear-pill{height:34px;min-width:40px}
+  .mobile-help{bottom:max(154px,calc(env(safe-area-inset-bottom) + 142px));font-size:8px}
+  .stage-panel{top:63px;left:9px;width:calc(100vw - 18px);max-width:none;padding:9px 11px}.stage-panel h2{font-size:14px;margin-top:4px}.stage-panel p{font-size:9px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar{top:8px;left:8px;right:8px}.hud-group{gap:5px}.topbar .hud-card{min-width:58px;padding:6px 7px}.topbar .hud-card strong{font-size:12px}.topbar .hud-card label{font-size:7px}.icon{width:36px;height:36px}
+  .topbar .hud-group:first-child .hud-card:nth-child(3){display:none}
+}
+@media (max-width:390px){
+  .steer-key,.drive-key{width:52px;height:64px}.center-key{width:40px;height:64px}.steer-row,.drive-row{gap:4px}.mobile-drive-ui{left:7px;right:7px}.simple-card{padding:6px}
+  .quick-btn{padding:0 6px;font-size:9px}.mobile-help{display:none}
+}
+
 </style>
 </head>
 <body>
@@ -131,7 +181,7 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
     <div id="homeControlBar">
       <div class="home-tip">🖼点击图片暂停｜点击空白切换表情包</div>
     </div>
-    <button id="enterExamBtn">🚘进入 C1 科目二模拟考试</button>
+    <button id="enterExamBtn">🚘 开始 C1 科目二手机模拟</button>
   </section>
 
   <section id="hud" class="hidden">
@@ -162,11 +212,56 @@ h1{font-size:clamp(34px,5vw,68px);line-height:1.05;margin-top:18px;letter-spacin
   </section>
 
   <section id="controls" class="hidden">
-    <div class="steer-wrap"><div id="steerWheel"><div class="wheel-spoke"></div><div class="wheel-center">方向盘</div></div></div>
-    <div class="signals"><button class="signal" id="leftSignal">◀ 左灯</button><button class="signal" id="rightSignal">右灯 ▶</button></div>
-    <div class="gearbox"><button class="gear" data-gear="1">1挡</button><button class="gear active" data-gear="N">N</button><button class="gear" data-gear="R">R挡</button><button class="handbrake active" id="handbrakeBtn">手刹</button></div>
-    <div class="pedals"><button class="pedal" id="clutchBtn">离合</button><button class="pedal brake" id="brakeBtn">刹车</button><button class="pedal" id="throttleBtn">油门</button></div>
-    <div class="keyboard-hint">A / D 方向 · W 油门 · S 刹车 · Q 离合 · 1 / N / R 换挡 · Space 手刹 · Z / X 转向灯</div>
+    <!-- 手机简易驾驶：左侧控制方向，右侧控制前进/刹车/倒车 -->
+    <div class="mobile-drive-ui">
+      <div class="steer-pad simple-card">
+        <div class="pad-label">方向</div>
+        <div class="steer-row">
+          <button class="steer-key" id="turnLeftBtn" aria-label="左转">
+            <span class="steer-icon">↶</span><small>左转</small>
+          </button>
+          <button class="center-key" id="centerBtn" aria-label="回正">
+            <div class="steer-meter"><i id="steerMarker"></i></div>
+            <small>回正</small>
+          </button>
+          <button class="steer-key" id="turnRightBtn" aria-label="右转">
+            <span class="steer-icon">↷</span><small>右转</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="drive-pad simple-card">
+        <div class="pad-label">行驶</div>
+        <div class="drive-row">
+          <button class="drive-key forward" id="forwardBtn">
+            <span>▲</span><b>前进</b>
+          </button>
+          <button class="drive-key brake" id="brakeBtn2">
+            <span>●</span><b>刹车</b>
+          </button>
+          <button class="drive-key reverse" id="reverseBtn">
+            <span>▼</span><b>倒车</b>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-strip">
+      <button class="quick-btn" id="leftSignal2">◀ 左转灯</button>
+      <div class="gear-pill"><span id="simpleGear">N</span><small>挡位</small></div>
+      <button class="quick-btn park active" id="parkBtn">P 驻车</button>
+      <button class="quick-btn" id="rightSignal2">右转灯 ▶</button>
+    </div>
+
+    <div class="mobile-help">按住左右转向 · 松手自动回正 · 按住前进/倒车即可行驶</div>
+
+    <!-- 兼容旧逻辑的隐藏控件 -->
+    <div class="legacy-controls" aria-hidden="true">
+      <div class="steer-wrap"><div id="steerWheel"><div class="wheel-spoke"></div><div class="wheel-center">方向盘</div></div></div>
+      <div class="signals"><button class="signal" id="leftSignal">◀ 左灯</button><button class="signal" id="rightSignal">右灯 ▶</button></div>
+      <div class="gearbox"><button class="gear" data-gear="1">1挡</button><button class="gear active" data-gear="N">N</button><button class="gear" data-gear="R">R挡</button><button class="handbrake active" id="handbrakeBtn">手刹</button></div>
+      <div class="pedals"><button class="pedal" id="clutchBtn">离合</button><button class="pedal brake" id="brakeBtn">刹车</button><button class="pedal" id="throttleBtn">油门</button></div>
+    </div>
   </section>
 
   <div id="toast"></div>
@@ -277,89 +372,126 @@ $('retryBtn').onclick=()=>startSession('exam',0);
 $('guideBtn').onclick=()=>{session.guide=!session.guide;$('guideBtn').style.color=session.guide?'var(--green)':'';};
 
 /* =========================================================
-   3. 输入
+   3. 手机简易输入
+   - 不需要离合/手动换挡
+   - 前进/倒车自动切换挡位
+   - 停稳后自动驻车
+   - 左右按住转向，松开自动回正
 ========================================================= */
-const input={ throttle:0, brake:0, clutch:0, steer:0, left:false, right:false };
-let gear='N', handbrake=true, engineOn=true, signal='off';
+const input={drive:0,brake:0,steer:0};
+let gear='N',handbrake=true,engineOn=true,signal='off';
 const keys={};
+let touchDrive=0,touchBrake=0,turnLeftHeld=false,turnRightHeld=false,autoHoldClock=0;
+
+function vibrate(ms=12){try{navigator.vibrate?.(ms)}catch(e){}}
+function pressState(el,on){el?.classList.toggle('active',on)}
+function bindHold(id,onDown,onUp){
+  const el=$(id); if(!el)return;
+  const down=e=>{e.preventDefault();el.setPointerCapture?.(e.pointerId);pressState(el,true);vibrate();onDown?.();};
+  const up=e=>{e?.preventDefault?.();pressState(el,false);onUp?.();};
+  el.addEventListener('pointerdown',down);
+  ['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,up));
+}
+
+bindHold('forwardBtn',()=>{touchDrive=1;handbrake=false;},()=>{touchDrive=0;});
+bindHold('reverseBtn',()=>{touchDrive=-1;handbrake=false;},()=>{touchDrive=0;});
+bindHold('brakeBtn2',()=>{touchBrake=1;},()=>{touchBrake=0;});
+bindHold('turnLeftBtn',()=>{turnLeftHeld=true;},()=>{turnLeftHeld=false;});
+bindHold('turnRightBtn',()=>{turnRightHeld=true;},()=>{turnRightHeld=false;});
+
+$('centerBtn').addEventListener('click',()=>{input.steer=0;updateSteerVisual();vibrate();});
+$('parkBtn').addEventListener('click',()=>{handbrake=!handbrake;if(handbrake&&Math.abs(car.speed)<.25)car.speed=0;syncControls();vibrate();});
+$('leftSignal2').addEventListener('click',()=>toggleSignal('left'));
+$('rightSignal2').addEventListener('click',()=>toggleSignal('right'));
+
 addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA'].includes(document.activeElement?.tagName))return;
   keys[e.key.toLowerCase()]=true;
-  if(e.key==='1')setGear('1'); if(e.key.toLowerCase()==='n')setGear('N'); if(e.key.toLowerCase()==='r')setGear('R');
-  if(e.code==='Space'){ e.preventDefault(); handbrake=!handbrake; syncControls(); }
-  if(e.key.toLowerCase()==='z')toggleSignal('left'); if(e.key.toLowerCase()==='x')toggleSignal('right');
+  if(e.key.toLowerCase()==='z')toggleSignal('left');
+  if(e.key.toLowerCase()==='x')toggleSignal('right');
 });
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-function holdButton(el,prop){
-  const on=e=>{e.preventDefault();input[prop]=1;el.classList.add('active');}; const off=()=>{input[prop]=0;el.classList.remove('active');};
-  el.addEventListener('pointerdown',on); ['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,off));
-}
-holdButton($('throttleBtn'),'throttle'); holdButton($('brakeBtn'),'brake'); holdButton($('clutchBtn'),'clutch');
-document.querySelectorAll('.gear').forEach(b=>b.onclick=()=>setGear(b.dataset.gear));
-$('handbrakeBtn').onclick=()=>{ handbrake=!handbrake; syncControls(); };
-$('leftSignal').onclick=()=>toggleSignal('left'); $('rightSignal').onclick=()=>toggleSignal('right');
-function setGear(g){ if(Math.abs(car.speed)>0.35 && g!==gear){toast('车辆移动中无法换挡','error');return;} gear=g; syncControls(); }
-function toggleSignal(s){ signal=signal===s?'off':s; syncControls(); }
-function syncControls(){
-  document.querySelectorAll('.gear').forEach(b=>b.classList.toggle('active',b.dataset.gear===gear));
-  $('handbrakeBtn').classList.toggle('active',handbrake);
-  $('leftSignal').classList.toggle('active',signal==='left'); $('rightSignal').classList.toggle('active',signal==='right');
-}
 
-/* 方向盘：±450° 映射到前轮 ±34° */
-let wheelAngle=0, draggingWheel=false, wheelStartPointer=0, wheelStartAngle=0;
-const wheel=$('steerWheel');
-function pointerAngle(e){const r=wheel.getBoundingClientRect();return Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2))*180/Math.PI;}
-wheel.addEventListener('pointerdown',e=>{draggingWheel=true;wheel.setPointerCapture?.(e.pointerId);wheelStartPointer=pointerAngle(e);wheelStartAngle=wheelAngle;});
-wheel.addEventListener('pointermove',e=>{if(!draggingWheel)return;let d=pointerAngle(e)-wheelStartPointer;if(d>180)d-=360;if(d<-180)d+=360;wheelAngle=Math.max(-450,Math.min(450,wheelStartAngle+d*3));input.steer=wheelAngle/450;wheel.style.transform=`rotate(${wheelAngle}deg)`;});
-['pointerup','pointercancel'].forEach(t=>wheel.addEventListener(t,()=>draggingWheel=false));
+function toggleSignal(s){signal=signal===s?'off':s;syncControls();vibrate();}
+function updateSteerVisual(){
+  const marker=$('steerMarker'); if(marker)marker.style.left=`${50+input.steer*43}%`;
+}
+function syncControls(){
+  $('simpleGear').textContent=gear;
+  $('parkBtn').classList.toggle('active',handbrake);
+  $('leftSignal2').classList.toggle('active',signal==='left');
+  $('rightSignal2').classList.toggle('active',signal==='right');
+  // 隐藏兼容控件仍保持状态
+  document.querySelectorAll('.gear').forEach(b=>b.classList.toggle('active',b.dataset.gear===gear));
+  $('handbrakeBtn')?.classList.toggle('active',handbrake);
+  $('leftSignal')?.classList.toggle('active',signal==='left');
+  $('rightSignal')?.classList.toggle('active',signal==='right');
+}
 
 /* =========================================================
-   4. 车辆模型（低速 bicycle model）
+   4. 手机低速车辆模型
+   目标是“像车”但操作不复杂：自动挡、自动离合、低速限速。
 ========================================================= */
 const car={x:0,y:0,heading:0,speed:0,rpm:850,stalled:false,grade:0,lastX:0,lastY:0};
 const camera={x:0,y:0,scale:55};
-function resetCar(spawn){ Object.assign(car,{x:spawn.x,y:spawn.y,heading:spawn.h,speed:0,rpm:850,stalled:false,grade:0,lastX:spawn.x,lastY:spawn.y}); gear='N'; handbrake=true; signal='off'; engineOn=true; wheelAngle=0; input.steer=0; wheel.style.transform='rotate(0deg)'; syncControls(); camera.x=car.x;camera.y=car.y; }
-function updateInputs(dt){
-  input.throttle=Math.max(input.throttle,keys['w']?1:0); input.brake=Math.max(input.brake,keys['s']?1:0); input.clutch=Math.max(input.clutch,keys['q']?1:0);
-  const keySteer=(keys['a']?-1:0)+(keys['d']?1:0);
-  if(keySteer){input.steer+=keySteer*dt*1.9;input.steer=Math.max(-1,Math.min(1,input.steer));wheelAngle=input.steer*450;wheel.style.transform=`rotate(${wheelAngle}deg)`;}
-  else if(!draggingWheel){input.steer*=Math.pow(.25,dt);wheelAngle=input.steer*450;wheel.style.transform=`rotate(${wheelAngle}deg)`;}
+function resetCar(spawn){
+  Object.assign(car,{x:spawn.x,y:spawn.y,heading:spawn.h,speed:0,rpm:850,stalled:false,grade:0,lastX:spawn.x,lastY:spawn.y});
+  gear='N';handbrake=true;signal='off';engineOn=true;input.drive=0;input.brake=0;input.steer=0;touchDrive=0;touchBrake=0;turnLeftHeld=false;turnRightHeld=false;autoHoldClock=0;
+  updateSteerVisual();syncControls();camera.x=car.x;camera.y=car.y;
 }
-function clearMomentaryKeys(){ if(!keys['w'])input.throttle=0;if(!keys['s'])input.brake=0;if(!keys['q'])input.clutch=0; }
-function currentGrade(){ return session.active && session.project.id==='ramp' && car.x>-3 && car.x<7 ? 0.10 : 0; }
+function currentGrade(){return session.active&&session.project&&session.project.id==='ramp'&&car.x>-3&&car.x<7?0.10:0;}
+function approach(v,target,amount){return v<target?Math.min(v+amount,target):Math.max(v-amount,target);}
+function updateInputs(dt){
+  const keyDrive=keys['w']?1:keys['s']?-1:0;
+  input.drive=keyDrive||touchDrive;
+  input.brake=(keys[' ']?1:0)||touchBrake;
+  const l=turnLeftHeld||keys['a'];
+  const r=turnRightHeld||keys['d'];
+  const target=l&&!r?-1:r&&!l?1:0;
+  const rate=target===0?2.8:1.65;
+  input.steer=approach(input.steer,target,rate*dt);
+  input.steer=Math.max(-1,Math.min(1,input.steer));
+  updateSteerVisual();
+
+  if(input.drive>0){gear='1';handbrake=false;}
+  else if(input.drive<0){gear='R';handbrake=false;}
+  syncControls();
+}
 function updateCar(dt){
-  if(!session.running || session.paused)return;
+  if(!session.running||session.paused)return;
   updateInputs(dt);
   car.grade=currentGrade();
-  const dir=gear==='1'?1:gear==='R'?-1:0;
-  const clutchEngage=1-input.clutch;
-  const throttle=input.throttle;
-  let accel=0;
-  if(engineOn && dir!==0 && !handbrake){
-    const idleDrive=0.55*clutchEngage;
-    const engineDrive=(1.1+2.9*throttle)*clutchEngage;
-    accel += dir*(idleDrive+engineDrive);
+
+  const desired=input.drive>0?1.38:input.drive<0?-1.05:0; // 约 5km/h / 3.8km/h
+  if(input.brake){
+    car.speed=approach(car.speed,0,4.8*dt);
+    if(Math.abs(car.speed)<.04){car.speed=0;handbrake=true;autoHoldClock=0;}
+  }else if(handbrake&&input.drive===0){
+    car.speed=approach(car.speed,0,6.5*dt);
+    if(Math.abs(car.speed)<.02)car.speed=0;
+  }else if(input.drive!==0){
+    // 自动离合 + 自动挡：平顺向目标低速加速
+    const accel=(Math.sign(desired)===Math.sign(car.speed)||Math.abs(car.speed)<.05)?1.85:3.0;
+    car.speed=approach(car.speed,desired,accel*dt);
+    autoHoldClock=0;
+  }else{
+    // 松开前进/倒车后自然减速；坡道上允许轻微后溜，便于体现半坡控制
+    car.speed=approach(car.speed,0,0.72*dt);
+    if(car.grade>0&&!handbrake&&Math.abs(car.speed)<.32)car.speed-=0.34*dt;
+    if(Math.abs(car.speed)<.035){
+      autoHoldClock+=dt;
+      if(autoHoldClock>.42){car.speed=0;handbrake=true;}
+    }else autoHoldClock=0;
   }
-  // 坡道重力：坡道向 +x 上坡
-  if(car.grade>0) accel += -9.81*car.grade*Math.cos(car.heading);
-  // 制动、手刹、滚阻
-  const brakeForce=input.brake*6.5 + (handbrake?8.0:0);
-  if(Math.abs(car.speed)>.02){ accel += -Math.sign(car.speed)*(0.55 + brakeForce); }
-  else if(brakeForce>1.5){car.speed=0;}
-  car.speed += accel*dt;
-  car.speed=Math.max(-3.0,Math.min(4.0,car.speed));
-  if(Math.abs(car.speed)<.025 && Math.abs(accel)<.7)car.speed=0;
-  // 简化熄火：挂挡、离合完全抬起、低速且手刹/坡道负载大
-  if(engineOn && dir!==0 && input.clutch<.05 && Math.abs(car.speed)<.08 && throttle<.05 && (handbrake||car.grade>.06)){
-    engineOn=false;car.stalled=true;car.rpm=0; penalty(10,'发动机熄火'); toast('发动机熄火：踩离合 + 油门可重新启动','error');
-  }
-  if(!engineOn && input.clutch>.8 && throttle>.25){engineOn=true;car.stalled=false;car.rpm=900;toast('发动机已重新启动','ok');}
+
+  car.speed=Math.max(-1.18,Math.min(1.5,car.speed));
   const steer=input.steer*CAR.maxSteer;
-  if(Math.abs(car.speed)>.005){ car.heading += (car.speed/CAR.wheelbase)*Math.tan(steer)*dt; }
-  car.lastX=car.x;car.lastY=car.y; car.x += Math.cos(car.heading)*car.speed*dt; car.y += Math.sin(car.heading)*car.speed*dt;
-  const targetRpm=engineOn?(850+throttle*2600+Math.abs(car.speed)*300):0; car.rpm += (targetRpm-car.rpm)*Math.min(1,dt*6);
-  clearMomentaryKeys();
+  if(Math.abs(car.speed)>.004)car.heading+=(car.speed/CAR.wheelbase)*Math.tan(steer)*dt;
+  car.lastX=car.x;car.lastY=car.y;
+  car.x+=Math.cos(car.heading)*car.speed*dt;
+  car.y+=Math.sin(car.heading)*car.speed*dt;
+  car.rpm=900+Math.abs(car.speed)*520+(input.drive!==0?380:0);
+  syncControls();
 }
 
 /* =========================================================
@@ -462,9 +594,9 @@ const makers={reverse:makeReverse,ramp:makeRamp,side:makeSide,curve:makeCurve,ri
 ========================================================= */
 const session={active:false,running:false,paused:false,mode:'exam',projectIndex:0,project:null,score:100,totalTime:0,projectTime:0,penalties:[],guide:false,prevCarX:0,failed:false,completed:0};
 function startSession(mode,index){
-  session.active=true;session.running=true;session.paused=false;session.mode=mode;session.projectIndex=index;session.score=100;session.totalTime=0;session.penalties=[];session.failed=false;session.completed=0;session.guide=mode==='practice';
+  session.active=true;session.running=true;session.paused=false;session.mode=mode;session.projectIndex=index;session.score=100;session.totalTime=0;session.penalties=[];session.failed=false;session.completed=0;session.guide=true;
   homePage.style.display='none';canvas.style.display='block';hud.classList.remove('hidden');controls.classList.remove('hidden');resultOverlay.classList.add('hidden');pauseOverlay.classList.add('hidden');
-  loadProject(index); modeTag.textContent=mode==='exam'?'模拟考试':'单项练习'; $('guideBtn').style.color=session.guide?'var(--green)':'';
+  loadProject(index); modeTag.textContent=mode==='exam'?'手机简易模拟':'单项练习'; $('guideBtn').style.color=session.guide?'var(--green)':'';
 }
 function loadProject(index){session.projectIndex=index;const def=PROJECTS[index];session.project=makers[def.id]();session.projectTime=0;resetCar(session.project.spawn);session.prevCarX=car.x;updateHUD();toast(`开始：${session.project.name}`,'ok');}
 function penalty(points,reason){if(session.failed)return;session.score=Math.max(0,session.score-points);session.penalties.push({points,reason});updateHUD();if(session.mode==='exam'&&session.score<RULES.passScore)fail('累计扣分后成绩低于 80 分');}
@@ -538,7 +670,7 @@ function drawCar(){
   ctx.restore();
 }
 function drawTrajectory(){if(!session.guide)return;const steer=input.steer*CAR.maxSteer;if(Math.abs(steer)<.02)return;const radius=CAR.wheelbase/Math.tan(steer);ctx.save();ctx.translate(car.x,car.y);ctx.rotate(car.heading);ctx.strokeStyle='rgba(107,197,255,.45)';ctx.lineWidth=.035;ctx.setLineDash([.16,.12]);ctx.beginPath();ctx.arc(0,radius,Math.abs(radius),-Math.PI/2*(Math.sign(radius)),(-Math.PI/2+1.0)*(Math.sign(radius)),radius<0);ctx.stroke();ctx.restore()}
-function drawScene(){ctx.clearRect(0,0,innerWidth,innerHeight);ctx.fillStyle='#07110c';ctx.fillRect(0,0,innerWidth,innerHeight);if(!session.active||!session.project)return;camera.scale=innerWidth<700?42:58;camera.x+=(car.x-camera.x)*.08;camera.y+=(car.y-camera.y)*.08;beginWorld();session.project.draw();drawTrajectory();drawCar();endWorld();}
+function drawScene(){ctx.clearRect(0,0,innerWidth,innerHeight);ctx.fillStyle='#07110c';ctx.fillRect(0,0,innerWidth,innerHeight);if(!session.active||!session.project)return;camera.scale=innerWidth<700?(innerHeight>innerWidth?35:44):58;camera.x+=(car.x-camera.x)*.08;camera.y+=(car.y-camera.y)*.08;beginWorld();session.project.draw();drawTrajectory();drawCar();endWorld();}
 
 /* =========================================================
    9. 主循环
