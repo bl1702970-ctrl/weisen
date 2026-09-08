@@ -1,300 +1,4875 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>乱跑表情包</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-  width:100vw;height:100vh;overflow:hidden;
-  background:radial-gradient(circle at 20% 10%,#2b1b35 0%,#121218 50%,#050508 100%);
-  font-family:system-ui,sans-serif;
-}
-/* 首页界面 */
-#homePage{
-  width:100%;height:100%;position:absolute;top:0;left:0;
-}
-/* 游戏界面默认隐藏 */
-#gamePage{
-  width:100%;height:100%;position:absolute;top:0;left:0;display:none;
-}
-.spark{
-  position:absolute;width:60px;height:60px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,210,80,0.6) 0%,transparent 70%);
-  pointer-events:none;
-  animation:sparkAnim 0.45s ease-out forwards;
-}
-@keyframes sparkAnim{
-  0%{transform:scale(0.2);opacity:0.9;}
-  100%{transform:scale(2.2);opacity:0;}
-}
-#photo{
-  position:absolute;width:30vmin;height:30vmin;
-  border-radius:22px;overflow:hidden;cursor:pointer;user-select:none;
-  box-shadow:0 0 40px rgba(255,180,80,0.32),0 12px 40px rgba(0,0,0,0.7);
-}
-#photo img{width:100%;height:100%;object-fit:cover;}
-#title{
-  position:fixed;top:24px;width:100%;text-align:center;
-  color:rgba(255,255,255,0.65);font-size:15px;letter-spacing:1px;pointer-events:none;
-}
-#controlBar{
-  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-  display:flex;gap:14px;align-items:center;z-index:100;
-}
-.tip-btn{
-  color:#fff;font-size:13px;background:rgba(255,255,255,0.12);
-  backdrop-filter:blur(10px);padding:12px 22px;border-radius:999px;
-  border:1px solid rgba(255,255,255,0.18);
-}
-.enterGameBtn{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  z-index:200;
-  background:#ff6644;
-  color:white;border:none;padding:14px 32px;border-radius:999px;
-  font-size:16px;cursor:pointer;
-}
-/* 游戏页面 */
-#gamePlayer{
-  position:absolute;width:22vmin;height:22vmin;
-  border-radius:16px;overflow:hidden;
-}
-#gamePlayer img{width:100%;height:100%;object-fit:cover;}
-.bullet{
-  position:absolute;width:14px;height:14px;background:#ff4444;
-  border-radius:50%;
-}
-.backHomeBtn{
-  position:fixed;top:16px;left:16px;
-  background:#4477ff;color:white;border:none;padding:8px 16px;border-radius:8px;
-  cursor:pointer;z-index:300;
-}
-.gameOverBox{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  background:#111;padding:30px;border-radius:16px;text-align:center;
-  color:white;display:none;z-index:400;
-}
-</style>
-</head>
-<body>
-<!-- 首页 -->
-<div id="homePage">
-  <div id="title">👹乱跑的萎缩｜点图片暂停，点空白切换图片</div>
-  <div id="photo">
-    <img id="imgEl" src="f57b7468deb628469350c27aad31d26e.png" alt="表情包">
-  </div>
-  <div id="controlBar">
-    <div class="tip-btn">🖼点击图片暂停｜点击空白切换表情包</div>
-  </div>
-  <button class="enterGameBtn" onclick="goGame()">🎮进入躲飞弹游戏</button>
-</div>
 
-<!-- 游戏页面 -->
-<div id="gamePage">
-  <button class="backHomeBtn" onclick="goHome()">←返回首页</button>
-  <div id="gamePlayer">
-    <img id="gameImg" src="f57b7468deb628469350c27aad31d26e.png">
+<html lang="zh-CN">
+
+<head>
+
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<title>乱跑表情包 · 躲飞弹</title>
+
+
+
+<style>
+
+/* =========================================================
+
+   基础
+
+========================================================= */
+
+:root{
+
+  --bg:#07070b;
+
+  --panel:rgba(18,18,26,.72);
+
+  --line:rgba(255,255,255,.08);
+
+  --text:#fff;
+
+  --sub:rgba(255,255,255,.58);
+
+  --orange:#ff6a3d;
+
+  --orange2:#ff9c5b;
+
+  --blue:#7aa7ff;
+
+  --red:#ff4057;
+
+}
+
+
+
+*{
+
+  margin:0;
+
+  padding:0;
+
+  box-sizing:border-box;
+
+  -webkit-tap-highlight-color:transparent;
+
+}
+
+
+
+html,body{
+
+  width:100%;
+
+  height:100%;
+
+  overflow:hidden;
+
+  background:#050507;
+
+  font-family:
+
+    Inter,
+
+    "PingFang SC",
+
+    "Microsoft YaHei",
+
+    system-ui,
+
+    sans-serif;
+
+  color:#fff;
+
+  user-select:none;
+
+}
+
+
+
+button{
+
+  font:inherit;
+
+}
+
+
+
+/* =========================================================
+
+   通用背景
+
+========================================================= */
+
+.page{
+
+  position:absolute;
+
+  inset:0;
+
+  overflow:hidden;
+
+}
+
+
+
+.bg{
+
+  position:absolute;
+
+  inset:0;
+
+  pointer-events:none;
+
+  background:
+
+    radial-gradient(circle at 20% 15%, rgba(117,76,255,.22), transparent 34%),
+
+    radial-gradient(circle at 85% 78%, rgba(255,92,52,.18), transparent 33%),
+
+    linear-gradient(145deg,#11111a 0%,#09090e 48%,#040406 100%);
+
+}
+
+
+
+.bg::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background-image:
+
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+
+  background-size:44px 44px;
+
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),transparent 90%);
+
+}
+
+
+
+.bg::after{
+
+  content:"";
+
+  position:absolute;
+
+  inset:-20%;
+
+  background:conic-gradient(
+
+    from 0deg,
+
+    transparent,
+
+    rgba(255,255,255,.018),
+
+    transparent 25%
+
+  );
+
+  animation:bgRotate 16s linear infinite;
+
+}
+
+
+
+@keyframes bgRotate{
+
+  to{ transform:rotate(360deg); }
+
+}
+
+
+
+
+
+/* =========================================================
+
+   首页
+
+========================================================= */
+
+#homePage{
+
+  z-index:10;
+
+}
+
+
+
+.home-header{
+
+  position:absolute;
+
+  top:28px;
+
+  left:50%;
+
+  transform:translateX(-50%);
+
+  z-index:10;
+
+  text-align:center;
+
+  pointer-events:none;
+
+}
+
+
+
+.logo{
+
+  font-size:20px;
+
+  font-weight:800;
+
+  letter-spacing:1px;
+
+}
+
+
+
+.subtitle{
+
+  margin-top:8px;
+
+  font-size:12px;
+
+  color:var(--sub);
+
+  letter-spacing:.6px;
+
+}
+
+
+
+#photo{
+
+  position:absolute;
+
+  width:28vmin;
+
+  height:28vmin;
+
+  min-width:120px;
+
+  min-height:120px;
+
+  max-width:240px;
+
+  max-height:240px;
+
+  border-radius:28px;
+
+  overflow:hidden;
+
+  cursor:pointer;
+
+  z-index:5;
+
+  border:1px solid rgba(255,255,255,.12);
+
+  box-shadow:
+
+    0 0 0 1px rgba(255,255,255,.03),
+
+    0 25px 80px rgba(0,0,0,.6),
+
+    0 0 60px rgba(255,129,73,.18);
+
+  transform:translateZ(0);
+
+}
+
+
+
+#photo::after{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  border-radius:inherit;
+
+  box-shadow:inset 0 0 40px rgba(255,255,255,.06);
+
+  pointer-events:none;
+
+}
+
+
+
+#photo img{
+
+  width:100%;
+
+  height:100%;
+
+  object-fit:cover;
+
+  display:block;
+
+  pointer-events:none;
+
+}
+
+
+
+.photo-paused{
+
+  filter:saturate(.45) brightness(.7);
+
+}
+
+
+
+.pauseBadge{
+
+  position:absolute;
+
+  inset:0;
+
+  display:none;
+
+  align-items:center;
+
+  justify-content:center;
+
+  background:rgba(0,0,0,.22);
+
+  backdrop-filter:blur(4px);
+
+  font-size:32px;
+
+}
+
+
+
+#photo.is-paused .pauseBadge{
+
+  display:flex;
+
+}
+
+
+
+.spark{
+
+  position:absolute;
+
+  width:70px;
+
+  height:70px;
+
+  margin:-35px 0 0 -35px;
+
+  border-radius:50%;
+
+  pointer-events:none;
+
+  z-index:3;
+
+  background:
+
+    radial-gradient(
+
+      circle,
+
+      rgba(255,219,126,.75) 0%,
+
+      rgba(255,115,54,.24) 40%,
+
+      transparent 70%
+
+    );
+
+  animation:sparkAnim .42s ease-out forwards;
+
+}
+
+
+
+@keyframes sparkAnim{
+
+  0%{
+
+    transform:scale(.25);
+
+    opacity:1;
+
+  }
+
+  100%{
+
+    transform:scale(2.4);
+
+    opacity:0;
+
+  }
+
+}
+
+
+
+.home-bottom{
+
+  position:absolute;
+
+  left:50%;
+
+  bottom:28px;
+
+  transform:translateX(-50%);
+
+  width:min(92%,460px);
+
+  z-index:20;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  gap:12px;
+
+}
+
+
+
+.tips{
+
+  display:flex;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+  justify-content:center;
+
+}
+
+
+
+.tip{
+
+  padding:8px 12px;
+
+  border:1px solid rgba(255,255,255,.09);
+
+  border-radius:100px;
+
+  background:rgba(255,255,255,.055);
+
+  backdrop-filter:blur(12px);
+
+  color:rgba(255,255,255,.7);
+
+  font-size:11px;
+
+}
+
+
+
+.main-btn{
+
+  position:relative;
+
+  width:min(100%,360px);
+
+  height:58px;
+
+  border:0;
+
+  border-radius:18px;
+
+  cursor:pointer;
+
+  color:white;
+
+  font-weight:800;
+
+  font-size:16px;
+
+  background:
+
+    linear-gradient(135deg,#ff804e,#ff4f32);
+
+  box-shadow:
+
+    0 16px 45px rgba(255,81,45,.26),
+
+    inset 0 1px rgba(255,255,255,.32);
+
+  overflow:hidden;
+
+  transition:.2s ease;
+
+}
+
+
+
+.main-btn:hover{
+
+  transform:translateY(-2px);
+
+}
+
+
+
+.main-btn:active{
+
+  transform:scale(.98);
+
+}
+
+
+
+.main-btn::before{
+
+  content:"";
+
+  position:absolute;
+
+  top:-40%;
+
+  left:-35%;
+
+  width:30%;
+
+  height:180%;
+
+  transform:rotate(20deg);
+
+  background:linear-gradient(
+
+    90deg,
+
+    transparent,
+
+    rgba(255,255,255,.28),
+
+    transparent
+
+  );
+
+  animation:buttonShine 3s infinite;
+
+}
+
+
+
+@keyframes buttonShine{
+
+  0%,65%{ left:-40%; }
+
+  100%{ left:130%; }
+
+}
+
+
+
+
+
+/* =========================================================
+
+   游戏页面
+
+========================================================= */
+
+#gamePage{
+
+  display:none;
+
+  z-index:20;
+
+  touch-action:none;
+
+  cursor:crosshair;
+
+}
+
+
+
+.game-bg{
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+
+    radial-gradient(circle at center,rgba(34,38,58,.9),rgba(7,8,12,1) 72%);
+
+}
+
+
+
+.game-grid{
+
+  position:absolute;
+
+  inset:-100px;
+
+  background-image:
+
+    linear-gradient(rgba(128,159,255,.055) 1px,transparent 1px),
+
+    linear-gradient(90deg,rgba(128,159,255,.055) 1px,transparent 1px);
+
+  background-size:52px 52px;
+
+  transform:perspective(600px) rotateX(5deg);
+
+  animation:gridMove 6s linear infinite;
+
+}
+
+
+
+@keyframes gridMove{
+
+  to{
+
+    background-position:0 52px,52px 0;
+
+  }
+
+}
+
+
+
+.vignette{
+
+  position:absolute;
+
+  inset:0;
+
+  pointer-events:none;
+
+  z-index:60;
+
+  box-shadow:
+
+    inset 0 0 120px rgba(0,0,0,.75),
+
+    inset 0 0 30px rgba(0,0,0,.3);
+
+}
+
+
+
+#arena{
+
+  position:absolute;
+
+  inset:0;
+
+  overflow:hidden;
+
+}
+
+
+
+
+
+/* =========================================================
+
+   游戏 HUD
+
+========================================================= */
+
+.game-top{
+
+  position:absolute;
+
+  top:16px;
+
+  left:16px;
+
+  right:16px;
+
+  z-index:100;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:flex-start;
+
+  pointer-events:none;
+
+}
+
+
+
+.hud-left,
+
+.hud-right{
+
+  display:flex;
+
+  gap:8px;
+
+  pointer-events:auto;
+
+}
+
+
+
+.hud-card{
+
+  min-width:86px;
+
+  height:52px;
+
+  padding:8px 13px;
+
+  border-radius:14px;
+
+  border:1px solid rgba(255,255,255,.09);
+
+  background:rgba(12,13,19,.64);
+
+  backdrop-filter:blur(15px);
+
+  box-shadow:0 10px 32px rgba(0,0,0,.28);
+
+}
+
+
+
+.hud-label{
+
+  font-size:9px;
+
+  text-transform:uppercase;
+
+  letter-spacing:1px;
+
+  color:rgba(255,255,255,.42);
+
+}
+
+
+
+.hud-value{
+
+  margin-top:2px;
+
+  font-size:18px;
+
+  font-weight:850;
+
+}
+
+
+
+.icon-btn{
+
+  width:48px;
+
+  height:48px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  border-radius:14px;
+
+  border:1px solid rgba(255,255,255,.09);
+
+  color:white;
+
+  background:rgba(12,13,19,.65);
+
+  backdrop-filter:blur(14px);
+
+  cursor:pointer;
+
+  font-size:18px;
+
+}
+
+
+
+.icon-btn:hover{
+
+  background:rgba(255,255,255,.1);
+
+}
+
+
+
+.life-wrap{
+
+  position:absolute;
+
+  top:84px;
+
+  left:50%;
+
+  transform:translateX(-50%);
+
+  z-index:100;
+
+  padding:8px 14px;
+
+  border:1px solid rgba(255,255,255,.08);
+
+  border-radius:100px;
+
+  background:rgba(13,14,19,.54);
+
+  backdrop-filter:blur(12px);
+
+  display:flex;
+
+  gap:6px;
+
+}
+
+
+
+.heart{
+
+  font-size:17px;
+
+  filter:drop-shadow(0 0 7px rgba(255,64,87,.3));
+
+}
+
+
+
+.heart.off{
+
+  filter:grayscale(1);
+
+  opacity:.18;
+
+}
+
+
+
+
+
+/* =========================================================
+
+   玩家
+
+========================================================= */
+
+#gamePlayer{
+
+  position:absolute;
+
+  width:112px;
+
+  height:112px;
+
+  left:50%;
+
+  top:50%;
+
+  border-radius:26px;
+
+  overflow:hidden;
+
+  z-index:30;
+
+  border:2px solid rgba(255,255,255,.62);
+
+  box-shadow:
+
+    0 0 0 6px rgba(255,255,255,.035),
+
+    0 0 38px rgba(109,164,255,.45),
+
+    0 18px 40px rgba(0,0,0,.48);
+
+  transform:translate(-50%,-50%);
+
+  will-change:left,top,transform;
+
+  transition:
+
+    box-shadow .15s,
+
+    opacity .15s;
+
+}
+
+
+
+#gamePlayer::after{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background:linear-gradient(
+
+    150deg,
+
+    rgba(255,255,255,.20),
+
+    transparent 35%
+
+  );
+
+  pointer-events:none;
+
+}
+
+
+
+#gamePlayer img{
+
+  width:100%;
+
+  height:100%;
+
+  display:block;
+
+  object-fit:cover;
+
+  pointer-events:none;
+
+}
+
+
+
+#gamePlayer.invincible{
+
+  animation:playerBlink .15s linear infinite alternate;
+
+  box-shadow:
+
+    0 0 0 8px rgba(101,169,255,.1),
+
+    0 0 60px rgba(95,169,255,.8);
+
+}
+
+
+
+@keyframes playerBlink{
+
+  from{ opacity:.45; }
+
+  to{ opacity:1; }
+
+}
+
+
+
+
+
+/* =========================================================
+
+   飞弹
+
+========================================================= */
+
+.bullet{
+
+  position:absolute;
+
+  left:0;
+
+  top:0;
+
+  width:18px;
+
+  height:18px;
+
+  margin:-9px 0 0 -9px;
+
+  border-radius:50%;
+
+  z-index:20;
+
+  pointer-events:none;
+
+  background:
+
+    radial-gradient(
+
+      circle at 35% 30%,
+
+      #fff 0 12%,
+
+      #ffb36f 18%,
+
+      #ff4f48 42%,
+
+      #9d102c 72%,
+
+      #350510 100%
+
+    );
+
+  box-shadow:
+
+    0 0 8px #ff4f48,
+
+    0 0 22px rgba(255,54,69,.72),
+
+    0 0 40px rgba(255,49,85,.25);
+
+}
+
+
+
+.bullet::after{
+
+  content:"";
+
+  position:absolute;
+
+  right:11px;
+
+  top:50%;
+
+  width:35px;
+
+  height:6px;
+
+  border-radius:100%;
+
+  transform:translateY(-50%);
+
+  background:
+
+    linear-gradient(
+
+      90deg,
+
+      transparent,
+
+      rgba(255,80,56,.12),
+
+      rgba(255,164,86,.64)
+
+    );
+
+  filter:blur(2px);
+
+  transform-origin:right center;
+
+}
+
+
+
+
+
+/* 预警 */
+
+.warning{
+
+  position:absolute;
+
+  width:30px;
+
+  height:30px;
+
+  border-radius:50%;
+
+  border:1px solid rgba(255,78,78,.85);
+
+  z-index:22;
+
+  pointer-events:none;
+
+  animation:warningPulse .32s infinite alternate;
+
+}
+
+
+
+.warning::before{
+
+  content:"!";
+
+  position:absolute;
+
+  inset:0;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  color:#ff6868;
+
+  font-size:13px;
+
+  font-weight:900;
+
+}
+
+
+
+@keyframes warningPulse{
+
+  from{
+
+    transform:scale(.78);
+
+    opacity:.45;
+
+  }
+
+  to{
+
+    transform:scale(1.08);
+
+    opacity:1;
+
+  }
+
+}
+
+
+
+
+
+/* =========================================================
+
+   碰撞特效
+
+========================================================= */
+
+.hit-flash{
+
+  position:absolute;
+
+  inset:0;
+
+  z-index:80;
+
+  pointer-events:none;
+
+  background:rgba(255,24,50,.30);
+
+  animation:hitFlash .28s forwards;
+
+}
+
+
+
+@keyframes hitFlash{
+
+  to{ opacity:0; }
+
+}
+
+
+
+.explosion{
+
+  position:absolute;
+
+  width:16px;
+
+  height:16px;
+
+  margin:-8px;
+
+  border-radius:50%;
+
+  pointer-events:none;
+
+  z-index:50;
+
+  background:white;
+
+  box-shadow:
+
+    0 0 15px 10px rgba(255,93,37,.7),
+
+    0 0 40px 20px rgba(255,44,64,.25);
+
+  animation:explode .4s ease-out forwards;
+
+}
+
+
+
+@keyframes explode{
+
+  to{
+
+    transform:scale(5);
+
+    opacity:0;
+
+  }
+
+}
+
+
+
+
+
+/* =========================================================
+
+   开始 / 暂停 / 游戏结束弹窗
+
+========================================================= */
+
+.overlay{
+
+  position:absolute;
+
+  inset:0;
+
+  z-index:200;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  padding:20px;
+
+  background:rgba(4,4,8,.46);
+
+  backdrop-filter:blur(10px);
+
+}
+
+
+
+.overlay.hidden{
+
+  display:none;
+
+}
+
+
+
+.dialog{
+
+  position:relative;
+
+  width:min(92vw,410px);
+
+  padding:30px;
+
+  border-radius:26px;
+
+  border:1px solid rgba(255,255,255,.10);
+
+  background:
+
+    linear-gradient(
+
+      145deg,
+
+      rgba(30,31,44,.94),
+
+      rgba(12,13,19,.97)
+
+    );
+
+  box-shadow:
+
+    0 30px 100px rgba(0,0,0,.58),
+
+    inset 0 1px rgba(255,255,255,.08);
+
+  text-align:center;
+
+}
+
+
+
+.dialog-icon{
+
+  width:64px;
+
+  height:64px;
+
+  margin:0 auto 16px;
+
+  border-radius:20px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:30px;
+
+  background:linear-gradient(
+
+    145deg,
+
+    rgba(255,115,65,.3),
+
+    rgba(255,63,62,.12)
+
+  );
+
+  border:1px solid rgba(255,126,82,.18);
+
+}
+
+
+
+.dialog h2{
+
+  font-size:25px;
+
+  line-height:1.2;
+
+}
+
+
+
+.dialog p{
+
+  margin-top:10px;
+
+  font-size:13px;
+
+  line-height:1.7;
+
+  color:rgba(255,255,255,.55);
+
+}
+
+
+
+.stat-row{
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr 1fr;
+
+  gap:8px;
+
+  margin:22px 0;
+
+}
+
+
+
+.stat-box{
+
+  padding:13px 6px;
+
+  border-radius:15px;
+
+  background:rgba(255,255,255,.045);
+
+  border:1px solid rgba(255,255,255,.06);
+
+}
+
+
+
+.stat-box span{
+
+  display:block;
+
+  font-size:10px;
+
+  color:rgba(255,255,255,.38);
+
+}
+
+
+
+.stat-box strong{
+
+  display:block;
+
+  margin-top:3px;
+
+  font-size:18px;
+
+}
+
+
+
+.dialog-btn{
+
+  width:100%;
+
+  border:0;
+
+  height:52px;
+
+  border-radius:16px;
+
+  color:white;
+
+  cursor:pointer;
+
+  font-weight:800;
+
+  background:linear-gradient(135deg,#ff7e49,#ff4b35);
+
+  box-shadow:0 12px 30px rgba(255,75,53,.22);
+
+}
+
+
+
+.dialog-btn.secondary{
+
+  margin-top:9px;
+
+  background:rgba(255,255,255,.075);
+
+  box-shadow:none;
+
+  color:rgba(255,255,255,.8);
+
+}
+
+
+
+
+
+/* =========================================================
+
+   底部提示
+
+========================================================= */
+
+.game-tip{
+
+  position:absolute;
+
+  bottom:20px;
+
+  left:50%;
+
+  transform:translateX(-50%);
+
+  z-index:100;
+
+  white-space:nowrap;
+
+  padding:9px 15px;
+
+  border:1px solid rgba(255,255,255,.075);
+
+  border-radius:100px;
+
+  color:rgba(255,255,255,.45);
+
+  background:rgba(0,0,0,.26);
+
+  backdrop-filter:blur(10px);
+
+  font-size:10px;
+
+  pointer-events:none;
+
+}
+
+
+
+
+
+/* =========================================================
+
+   手机适配
+
+========================================================= */
+
+@media(max-width:600px){
+
+
+
+  #gamePlayer{
+
+    width:88px;
+
+    height:88px;
+
+    border-radius:22px;
+
+  }
+
+
+
+  .hud-card{
+
+    min-width:70px;
+
+    height:48px;
+
+    padding:7px 10px;
+
+  }
+
+
+
+  .hud-value{
+
+    font-size:16px;
+
+  }
+
+
+
+  .game-top{
+
+    top:10px;
+
+    left:10px;
+
+    right:10px;
+
+  }
+
+
+
+  .icon-btn{
+
+    width:44px;
+
+    height:44px;
+
+  }
+
+
+
+  .life-wrap{
+
+    top:70px;
+
+  }
+
+
+
+  .home-header{
+
+    top:22px;
+
+  }
+
+
+
+  .home-bottom{
+
+    bottom:18px;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+
+
+
+
+<body>
+
+
+
+<!-- =======================================================
+
+     首页
+
+======================================================= -->
+
+<section id="homePage" class="page">
+
+
+
+  <div class="bg"></div>
+
+
+
+  <div class="home-header">
+
+    <div class="logo">👹 乱跑表情包</div>
+
+    <div class="subtitle">抓不到我 · BULLET DODGE</div>
+
   </div>
-  <div class="gameOverBox" id="gameOverUi">
-    <h2>💥游戏结束！被子弹击中</h2>
-    <p style="margin:12px 0">得分：<span id="scoreText">0</span></p>
-    <button onclick="restartGame()" style="padding:8px 16px;border-radius:6px">重新开始</button>
-    <button onclick="goHome()" style="padding:8px 16px;border-radius:6px;margin-left:8px">返回首页</button>
+
+
+
+  <div id="photo">
+
+    <img
+
+      id="imgEl"
+
+      src="f57b7468deb628469350c27aad31d26e.png"
+
+      alt="表情包"
+
+    />
+
+    <div class="pauseBadge">⏸</div>
+
   </div>
-</div>
+
+
+
+  <div class="home-bottom">
+
+
+
+    <div class="tips">
+
+      <div class="tip">👆 点表情暂停</div>
+
+      <div class="tip">🖼 点空白换图</div>
+
+      <div class="tip">💥 躲避飞弹</div>
+
+    </div>
+
+
+
+    <button id="enterGameBtn" class="main-btn">
+
+      🎮 开始躲飞弹
+
+    </button>
+
+
+
+  </div>
+
+
+
+</section>
+
+
+
+
+
+<!-- =======================================================
+
+     游戏页面
+
+======================================================= -->
+
+<section id="gamePage" class="page">
+
+
+
+  <div class="game-bg"></div>
+
+  <div class="game-grid"></div>
+
+
+
+  <div id="arena">
+
+
+
+    <!-- 玩家 -->
+
+    <div id="gamePlayer">
+
+      <img
+
+        id="gameImg"
+
+        src="f57b7468deb628469350c27aad31d26e.png"
+
+      />
+
+    </div>
+
+
+
+  </div>
+
+
+
+
+
+  <!-- HUD -->
+
+  <div class="game-top">
+
+
+
+    <div class="hud-left">
+
+
+
+      <div class="hud-card">
+
+        <div class="hud-label">SCORE</div>
+
+        <div class="hud-value" id="scoreValue">0</div>
+
+      </div>
+
+
+
+      <div class="hud-card">
+
+        <div class="hud-label">DODGED</div>
+
+        <div class="hud-value" id="dodgeValue">0</div>
+
+      </div>
+
+
+
+      <div class="hud-card">
+
+        <div class="hud-label">LEVEL</div>
+
+        <div class="hud-value" id="levelValue">1</div>
+
+      </div>
+
+
+
+    </div>
+
+
+
+
+
+    <div class="hud-right">
+
+
+
+      <button class="icon-btn" id="pauseBtn">
+
+        ⏸
+
+      </button>
+
+
+
+      <button class="icon-btn" id="homeBtn">
+
+        ⌂
+
+      </button>
+
+
+
+    </div>
+
+
+
+  </div>
+
+
+
+
+
+  <!-- 血量 -->
+
+  <div class="life-wrap">
+
+    <span class="heart" id="heart1">❤</span>
+
+    <span class="heart" id="heart2">❤</span>
+
+    <span class="heart" id="heart3">❤</span>
+
+  </div>
+
+
+
+
+
+  <div class="game-tip">
+
+    按住并拖动角色 · 飞弹锁定初始方向后不会追踪
+
+  </div>
+
+
+
+
+
+  <!-- 开始界面 -->
+
+  <div class="overlay" id="startOverlay">
+
+
+
+    <div class="dialog">
+
+
+
+      <div class="dialog-icon">
+
+        🚀
+
+      </div>
+
+
+
+      <h2>准备好了吗？</h2>
+
+
+
+      <p>
+
+        按住表情包拖动躲避飞弹。<br>
+
+        飞弹出现时只会锁定一次方向，发射后不会追踪你。
+
+      </p>
+
+
+
+      <div class="stat-row">
+
+
+
+        <div class="stat-box">
+
+          <span>生命</span>
+
+          <strong>3</strong>
+
+        </div>
+
+
+
+        <div class="stat-box">
+
+          <span>飞弹</span>
+
+          <strong>直线</strong>
+
+        </div>
+
+
+
+        <div class="stat-box">
+
+          <span>难度</span>
+
+          <strong>递增</strong>
+
+        </div>
+
+
+
+      </div>
+
+
+
+      <button class="dialog-btn" id="startBtn">
+
+        开始游戏
+
+      </button>
+
+
+
+    </div>
+
+
+
+  </div>
+
+
+
+
+
+  <!-- 暂停 -->
+
+  <div class="overlay hidden" id="pauseOverlay">
+
+
+
+    <div class="dialog">
+
+
+
+      <div class="dialog-icon">
+
+        ⏸
+
+      </div>
+
+
+
+      <h2>游戏暂停</h2>
+
+
+
+      <p>
+
+        飞弹也暂停了，继续后恢复。
+
+      </p>
+
+
+
+      <button class="dialog-btn" id="resumeBtn">
+
+        继续游戏
+
+      </button>
+
+
+
+      <button class="dialog-btn secondary" id="pauseHomeBtn">
+
+        返回首页
+
+      </button>
+
+
+
+    </div>
+
+
+
+  </div>
+
+
+
+
+
+  <!-- 游戏结束 -->
+
+  <div class="overlay hidden" id="gameOverOverlay">
+
+
+
+    <div class="dialog">
+
+
+
+      <div class="dialog-icon">
+
+        💥
+
+      </div>
+
+
+
+      <h2>游戏结束</h2>
+
+
+
+      <p>
+
+        这次没躲过去，再来一次？
+
+      </p>
+
+
+
+
+
+      <div class="stat-row">
+
+
+
+        <div class="stat-box">
+
+          <span>得分</span>
+
+          <strong id="finalScore">0</strong>
+
+        </div>
+
+
+
+        <div class="stat-box">
+
+          <span>躲过</span>
+
+          <strong id="finalDodged">0</strong>
+
+        </div>
+
+
+
+        <div class="stat-box">
+
+          <span>最高</span>
+
+          <strong id="bestScore">0</strong>
+
+        </div>
+
+
+
+      </div>
+
+
+
+
+
+      <button class="dialog-btn" id="restartBtn">
+
+        再来一次
+
+      </button>
+
+
+
+      <button class="dialog-btn secondary" id="gameOverHomeBtn">
+
+        返回首页
+
+      </button>
+
+
+
+    </div>
+
+
+
+  </div>
+
+
+
+
+
+  <div class="vignette"></div>
+
+
+
+</section>
+
+
+
+
+
+
 
 <script>
-// ==========首页表情包代码============
-const photo = document.getElementById("photo");
-const imgEl = document.getElementById("imgEl");
-const imgList = [
+
+/* =========================================================
+
+   配置
+
+========================================================= */
+
+
+
+const IMAGE_LIST = [
+
   "f57b7468deb628469350c27aad31d26e.png",
+
   "10067dde-a329-416b-b6f4-98d5ee70d8ea.png",
+
   "5706dfe1-7d73-45e1-8f2a-95de54c2d788.png"
+
 ];
-let currentImgIndex = 0;
 
-let posX = window.innerWidth*0.12;
-let posY = window.innerHeight*0.12;
-let velX = (Math.random()*2.8+1.2)*(Math.random()>0.5?1:-1);
-let velY = (Math.random()*2.8+1.2)*(Math.random()>0.5?1:-1);
-let running = true;
 
-photo.onclick = (e)=>{
-  e.stopPropagation();
-  running = !running;
+
+const CONFIG = {
+
+
+
+  // 玩家生命
+
+  maxLives: 3,
+
+
+
+  // 初始飞弹速度 px/s
+
+  baseBulletSpeed: 320,
+
+
+
+  // 每级增加速度
+
+  bulletSpeedIncrease: 22,
+
+
+
+  // 初始飞弹出现间隔 ms
+
+  baseSpawnInterval: 900,
+
+
+
+  // 最快生成间隔
+
+  minSpawnInterval: 260,
+
+
+
+  // 每一级减少生成间隔
+
+  spawnIntervalDecrease: 55,
+
+
+
+  // 多少秒升一级
+
+  levelDuration: 10,
+
+
+
+  // 飞弹发射角度随机偏差
+
+  bulletSpread: 0.15,
+
+
+
+  // 飞弹半径
+
+  bulletRadius: 9,
+
+
+
+  // 玩家受击后无敌时间
+
+  invincibleTime: 1000,
+
+
+
+  // 玩家碰撞区域缩放
+
+  playerHitboxScale: 0.36
+
 };
-document.body.onclick = ()=>{
-  if(document.getElementById("homePage").style.display !== "none"){
-    currentImgIndex = (currentImgIndex +1) % imgList.length;
-    imgEl.src = imgList[currentImgIndex];
-  }
-};
+
+
+
+
+
+/* =========================================================
+
+   DOM
+
+========================================================= */
+
+
+
+const homePage = document.getElementById("homePage");
+
+const gamePage = document.getElementById("gamePage");
+
+
+
+const photo = document.getElementById("photo");
+
+const imgEl = document.getElementById("imgEl");
+
+const gameImg = document.getElementById("gameImg");
+
+
+
+const enterGameBtn = document.getElementById("enterGameBtn");
+
+
+
+const arena = document.getElementById("arena");
+
+const player = document.getElementById("gamePlayer");
+
+
+
+const scoreValue = document.getElementById("scoreValue");
+
+const dodgeValue = document.getElementById("dodgeValue");
+
+const levelValue = document.getElementById("levelValue");
+
+
+
+const startOverlay = document.getElementById("startOverlay");
+
+const pauseOverlay = document.getElementById("pauseOverlay");
+
+const gameOverOverlay = document.getElementById("gameOverOverlay");
+
+
+
+const startBtn = document.getElementById("startBtn");
+
+const pauseBtn = document.getElementById("pauseBtn");
+
+const resumeBtn = document.getElementById("resumeBtn");
+
+
+
+const homeBtn = document.getElementById("homeBtn");
+
+const pauseHomeBtn = document.getElementById("pauseHomeBtn");
+
+const gameOverHomeBtn = document.getElementById("gameOverHomeBtn");
+
+
+
+const restartBtn = document.getElementById("restartBtn");
+
+
+
+const finalScore = document.getElementById("finalScore");
+
+const finalDodged = document.getElementById("finalDodged");
+
+const bestScore = document.getElementById("bestScore");
+
+
+
+const hearts = [
+
+  document.getElementById("heart1"),
+
+  document.getElementById("heart2"),
+
+  document.getElementById("heart3")
+
+];
+
+
+
+
+
+/* =========================================================
+
+   首页乱跑表情
+
+========================================================= */
+
+
+
+let currentImage = 0;
+
+
+
+let homeRunning = true;
+
+
+
+let homeX = window.innerWidth * 0.18;
+
+let homeY = window.innerHeight * 0.18;
+
+
+
+let homeVX =
+
+  (Math.random() * 150 + 110) *
+
+  (Math.random() > .5 ? 1 : -1);
+
+
+
+let homeVY =
+
+  (Math.random() * 150 + 110) *
+
+  (Math.random() > .5 ? 1 : -1);
+
+
+
+let lastHomeTime = performance.now();
+
+
+
+
+
 function createSpark(x,y){
-  const s = document.createElement("div");
-  s.className = "spark";
-  s.style.left = x+"px";
-  s.style.top = y+"px";
-  document.body.appendChild(s);
-  setTimeout(()=>s.remove(),450);
+
+
+
+  const spark = document.createElement("div");
+
+
+
+  spark.className = "spark";
+
+
+
+  spark.style.left = x + "px";
+
+  spark.style.top = y + "px";
+
+
+
+  homePage.appendChild(spark);
+
+
+
+  setTimeout(()=>{
+
+    spark.remove();
+
+  },450);
+
 }
-function loop(){
-  if(running){
+
+
+
+
+
+function homeAnimation(now){
+
+
+
+  const dt = Math.min(
+
+    (now - lastHomeTime) / 1000,
+
+    0.033
+
+  );
+
+
+
+  lastHomeTime = now;
+
+
+
+
+
+  if(homeRunning && homePage.style.display !== "none"){
+
+
+
     const w = photo.offsetWidth;
+
     const h = photo.offsetHeight;
+
+
+
+    homeX += homeVX * dt;
+
+    homeY += homeVY * dt;
+
+
+
     let hit = false;
-    posX += velX;
-    posY += velY;
-    if(posX <=0){ posX=0;velX=-velX;hit=true; }
-    if(posX+w >= window.innerWidth){ posX = window.innerWidth - w; velX=-velX; hit=true; }
-    if(posY <=0){ posY=0; velY=-velY; hit=true; }
-    if(posY+h >= window.innerHeight){ posY = window.innerHeight - h; velY=-velY; hit=true; }
-    if(hit){ createSpark(posX+w/2, posY+h/2); }
-    photo.style.left = posX+"px";
-    photo.style.top = posY+"px";
+
+
+
+
+
+    if(homeX <= 0){
+
+
+
+      homeX = 0;
+
+
+
+      homeVX = Math.abs(homeVX);
+
+
+
+      hit = true;
+
+    }
+
+
+
+
+
+    if(homeX + w >= window.innerWidth){
+
+
+
+      homeX = window.innerWidth - w;
+
+
+
+      homeVX = -Math.abs(homeVX);
+
+
+
+      hit = true;
+
+    }
+
+
+
+
+
+    if(homeY <= 0){
+
+
+
+      homeY = 0;
+
+
+
+      homeVY = Math.abs(homeVY);
+
+
+
+      hit = true;
+
+    }
+
+
+
+
+
+    if(homeY + h >= window.innerHeight){
+
+
+
+      homeY = window.innerHeight - h;
+
+
+
+      homeVY = -Math.abs(homeVY);
+
+
+
+      hit = true;
+
+    }
+
+
+
+
+
+    if(hit){
+
+
+
+      createSpark(
+
+        homeX + w / 2,
+
+        homeY + h / 2
+
+      );
+
+
+
+      // 每次碰墙稍微随机一下速度
+
+      homeVX *= 0.95 + Math.random() * .1;
+
+      homeVY *= 0.95 + Math.random() * .1;
+
+    }
+
+
+
+
+
+    photo.style.left = homeX + "px";
+
+    photo.style.top = homeY + "px";
+
   }
-  requestAnimationFrame(loop);
-}
-loop();
-window.addEventListener("resize",()=>{
-  const w = photo.offsetWidth;
-  const h = photo.offsetHeight;
-  if(posX+w>window.innerWidth) posX = window.innerWidth -w;
-  if(posY+h>window.innerHeight) posY = window.innerHeight -h;
-})
 
-// =========页面切换============
-function goGame(){
-  document.getElementById("homePage").style.display="none";
-  document.getElementById("gamePage").style.display="block";
-  startGame();
-}
-function goHome(){
-  document.getElementById("homePage").style.display="block";
-  document.getElementById("gamePage").style.display="none";
+
+
+
+
+  requestAnimationFrame(homeAnimation);
+
 }
 
-// =========躲飞弹游戏逻辑============
-let gamePlayer = document.getElementById("gamePlayer");
-let gameOverUi = document.getElementById("gameOverUi");
-let scoreText = document.getElementById("scoreText");
-let gameRunning = false;
-let score = 0;
-let bullets = [];
-let playerX,playerY;
-let isHold = false;
 
-//长按拖动控制角色（手机触摸 + 电脑鼠标）
-function startGame(){
-  gameOverUi.style.display="none";
-  score = 0;
-  scoreText.innerText=score;
-  bullets.forEach(b=>b.el.remove());
-  bullets=[];
-  gameRunning=true;
-  playerX = window.innerWidth/2;
-  playerY = window.innerHeight/2;
-  updatePlayerPos();
-}
-function restartGame(){
-  startGame();
-}
-function updatePlayerPos(){
-  gamePlayer.style.left = (playerX - gamePlayer.offsetWidth/2)+"px";
-  gamePlayer.style.top = (playerY - gamePlayer.offsetHeight/2)+"px";
-}
 
-//鼠标触摸监听
-document.getElementById("gamePage").addEventListener("mousedown",(e)=>{isHold=true;});
-document.getElementById("gamePage").addEventListener("mouseup",()=>{isHold=false;});
-document.getElementById("gamePage").addEventListener("mousemove",(e)=>{
-  if(gameRunning && isHold){
-    playerX = e.clientX;
-    playerY = e.clientY;
-    updatePlayerPos();
-  }
-})
-document.getElementById("gamePage").addEventListener("touchstart",(e)=>{
-  isHold=true;
-  let t = e.touches[0];
-  playerX = t.clientX;
-  playerY = t.clientY;
-  updatePlayerPos();
-})
-document.getElementById("gamePage").addEventListener("touchmove",(e)=>{
-  e.preventDefault();
-  if(gameRunning && isHold){
-    let t = e.touches[0];
-    playerX = t.clientX;
-    playerY = t.clientY;
-    updatePlayerPos();
-  }
-})
-document.getElementById("gamePage").addEventListener("touchend",()=>{isHold=false;})
+requestAnimationFrame(homeAnimation);
 
-//生成子弹
-function spawnBullet(){
-  if(!gameRunning) return;
-  const bulletEl = document.createElement("div");
-  bulletEl.className="bullet";
-  //从屏幕四边随机出来
-  let side = Math.floor(Math.random()*4);
-  let bx,by;
-  if(side===0){bx=Math.random()*window.innerWidth; by=-20;}
-  else if(side===1){bx=window.innerWidth+20; by=Math.random()*window.innerHeight;}
-  else if(side===2){bx=Math.random()*window.innerWidth; by=window.innerHeight+20;}
-  else {bx=-20; by=Math.random()*window.innerHeight;}
-  bulletEl.style.left=bx+"px";
-  bulletEl.style.top=by+"px";
-  document.getElementById("gamePage").appendChild(bulletEl);
-  bullets.push({el:bulletEl,x:bx,y:by});
-}
 
-//游戏循环
-function gameLoop(){
-  if(!gameRunning){
-    requestAnimationFrame(gameLoop);
+
+
+
+
+
+/* 点击表情暂停 */
+
+
+
+photo.addEventListener("click",(e)=>{
+
+
+
+  e.stopPropagation();
+
+
+
+  homeRunning = !homeRunning;
+
+
+
+  photo.classList.toggle(
+
+    "is-paused",
+
+    !homeRunning
+
+  );
+
+
+
+});
+
+
+
+
+
+/* 点击首页空白处切图 */
+
+
+
+homePage.addEventListener("click",(e)=>{
+
+
+
+  if(
+
+    e.target.closest("#photo") ||
+
+    e.target.closest("button") ||
+
+    e.target.closest(".home-bottom")
+
+  ){
+
     return;
-  }
-  //子弹移动，朝向玩家
-  for(let i=bullets.length-1;i>=0;i--){
-    let b = bullets[i];
-    let dx = playerX - b.x;
-    let dy = playerY - b.y;
-    let dist = Math.sqrt(dx*dx+dy*dy);
-    const speed = 4.5;
-    b.x += (dx/dist)*speed;
-    b.y += (dy/dist)*speed;
-    b.el.style.left = b.x+"px";
-    b.el.style.top = b.y+"px";
 
-    //碰撞检测
-    const pw = gamePlayer.offsetWidth/2;
-    const ph = gamePlayer.offsetHeight/2;
-    let hitDist = Math.sqrt((playerX-b.x)**2 + (playerY-b.y)**2);
-    if(hitDist < pw*0.65){
-      //击中，游戏结束
-      gameRunning = false;
-      gameOverUi.style.display="block";
-    }
-    //飞出屏幕删除子弹
-    if(b.x<-50||b.x>window.innerWidth+50||b.y<-50||b.y>window.innerHeight+50){
-      b.el.remove();
-      bullets.splice(i,1);
-    }
   }
-  score +=1;
-  scoreText.innerText = Math.floor(score/10);
-  requestAnimationFrame(gameLoop);
+
+
+
+  currentImage =
+
+    (currentImage + 1) %
+
+    IMAGE_LIST.length;
+
+
+
+  imgEl.src =
+
+    IMAGE_LIST[currentImage];
+
+
+
+});
+
+
+
+
+
+/* =========================================================
+
+   页面切换
+
+========================================================= */
+
+
+
+function openGame(){
+
+
+
+  homePage.style.display = "none";
+
+
+
+  gamePage.style.display = "block";
+
+
+
+  gameImg.src =
+
+    IMAGE_LIST[currentImage];
+
+
+
+  resetGame();
+
+
+
+  startOverlay.classList.remove("hidden");
+
+
+
 }
-gameLoop();
 
-//定时生成子弹
-setInterval(()=>{
-  if(gameRunning) spawnBullet();
-},550);
+
+
+
+
+function backHome(){
+
+
+
+  gameRunning = false;
+
+  gamePaused = false;
+
+
+
+  clearAllBullets();
+
+
+
+  gamePage.style.display = "none";
+
+  homePage.style.display = "block";
+
+
+
+  pauseOverlay.classList.add("hidden");
+
+  gameOverOverlay.classList.add("hidden");
+
+  startOverlay.classList.add("hidden");
+
+}
+
+
+
+
+
+enterGameBtn.addEventListener(
+
+  "click",
+
+  openGame
+
+);
+
+
+
+
+
+homeBtn.addEventListener(
+
+  "click",
+
+  pauseGame
+
+);
+
+
+
+
+
+pauseHomeBtn.addEventListener(
+
+  "click",
+
+  backHome
+
+);
+
+
+
+
+
+gameOverHomeBtn.addEventListener(
+
+  "click",
+
+  backHome
+
+);
+
+
+
+
+
+/* =========================================================
+
+   游戏状态
+
+========================================================= */
+
+
+
+let gameRunning = false;
+
+let gamePaused = false;
+
+
+
+let lives = CONFIG.maxLives;
+
+
+
+let score = 0;
+
+let dodged = 0;
+
+let level = 1;
+
+
+
+let gameTime = 0;
+
+
+
+let playerX =
+
+  window.innerWidth / 2;
+
+
+
+let playerY =
+
+  window.innerHeight / 2;
+
+
+
+let bullets = [];
+
+
+
+let pointerDown = false;
+
+
+
+let invincible = false;
+
+let invincibleTimer = null;
+
+
+
+let spawnTimer = 0;
+
+
+
+let previousGameTime =
+
+  performance.now();
+
+
+
+
+
+
+
+/* =========================================================
+
+   重置游戏
+
+========================================================= */
+
+
+
+function resetGame(){
+
+
+
+  gameRunning = false;
+
+  gamePaused = false;
+
+
+
+  lives = CONFIG.maxLives;
+
+
+
+  score = 0;
+
+  dodged = 0;
+
+  level = 1;
+
+
+
+  gameTime = 0;
+
+
+
+  spawnTimer = 0;
+
+
+
+  clearTimeout(
+
+    invincibleTimer
+
+  );
+
+
+
+  invincible = false;
+
+
+
+  player.classList.remove(
+
+    "invincible"
+
+  );
+
+
+
+  clearAllBullets();
+
+
+
+  playerX =
+
+    window.innerWidth / 2;
+
+
+
+  playerY =
+
+    window.innerHeight / 2;
+
+
+
+  updatePlayerPosition();
+
+
+
+  updateHUD();
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+   开始
+
+========================================================= */
+
+
+
+function beginGame(){
+
+
+
+  resetGame();
+
+
+
+  startOverlay.classList.add(
+
+    "hidden"
+
+  );
+
+
+
+  pauseOverlay.classList.add(
+
+    "hidden"
+
+  );
+
+
+
+  gameOverOverlay.classList.add(
+
+    "hidden"
+
+  );
+
+
+
+  gameRunning = true;
+
+
+
+  previousGameTime =
+
+    performance.now();
+
+
+
+}
+
+
+
+
+
+startBtn.addEventListener(
+
+  "click",
+
+  beginGame
+
+);
+
+
+
+
+
+restartBtn.addEventListener(
+
+  "click",
+
+  beginGame
+
+);
+
+
+
+
+
+
+
+/* =========================================================
+
+   暂停
+
+========================================================= */
+
+
+
+function pauseGame(){
+
+
+
+  if(!gameRunning) return;
+
+
+
+  gamePaused = true;
+
+
+
+  pauseOverlay.classList.remove(
+
+    "hidden"
+
+  );
+
+
+
+}
+
+
+
+
+
+function resumeGame(){
+
+
+
+  gamePaused = false;
+
+
+
+  pauseOverlay.classList.add(
+
+    "hidden"
+
+  );
+
+
+
+  previousGameTime =
+
+    performance.now();
+
+
+
+}
+
+
+
+
+
+pauseBtn.addEventListener(
+
+  "click",
+
+  pauseGame
+
+);
+
+
+
+
+
+resumeBtn.addEventListener(
+
+  "click",
+
+  resumeGame
+
+);
+
+
+
+
+
+/* =========================================================
+
+   玩家移动
+
+========================================================= */
+
+
+
+function updatePlayerPosition(){
+
+
+
+  const halfW =
+
+    player.offsetWidth / 2;
+
+
+
+  const halfH =
+
+    player.offsetHeight / 2;
+
+
+
+
+
+  playerX = Math.max(
+
+    halfW,
+
+    Math.min(
+
+      window.innerWidth - halfW,
+
+      playerX
+
+    )
+
+  );
+
+
+
+
+
+  playerY = Math.max(
+
+    halfH,
+
+    Math.min(
+
+      window.innerHeight - halfH,
+
+      playerY
+
+    )
+
+  );
+
+
+
+
+
+  player.style.left =
+
+    playerX + "px";
+
+
+
+  player.style.top =
+
+    playerY + "px";
+
+
+
+}
+
+
+
+
+
+/* Pointer API 同时支持鼠标 + 手机 */
+
+
+
+arena.addEventListener(
+
+  "pointerdown",
+
+  (e)=>{
+
+
+
+    if(
+
+      !gameRunning ||
+
+      gamePaused
+
+    ){
+
+      return;
+
+    }
+
+
+
+    pointerDown = true;
+
+
+
+    arena.setPointerCapture?.(
+
+      e.pointerId
+
+    );
+
+
+
+    playerX = e.clientX;
+
+    playerY = e.clientY;
+
+
+
+    updatePlayerPosition();
+
+  }
+
+);
+
+
+
+
+
+arena.addEventListener(
+
+  "pointermove",
+
+  (e)=>{
+
+
+
+    if(
+
+      !pointerDown ||
+
+      !gameRunning ||
+
+      gamePaused
+
+    ){
+
+      return;
+
+    }
+
+
+
+    playerX = e.clientX;
+
+    playerY = e.clientY;
+
+
+
+    updatePlayerPosition();
+
+
+
+  }
+
+);
+
+
+
+
+
+arena.addEventListener(
+
+  "pointerup",
+
+  ()=>{
+
+    pointerDown = false;
+
+  }
+
+);
+
+
+
+
+
+arena.addEventListener(
+
+  "pointercancel",
+
+  ()=>{
+
+    pointerDown = false;
+
+  }
+
+);
+
+
+
+
+
+/* =========================================================
+
+   飞弹警告
+
+========================================================= */
+
+
+
+function createWarning(x,y){
+
+
+
+  const warning =
+
+    document.createElement("div");
+
+
+
+  warning.className =
+
+    "warning";
+
+
+
+  warning.style.left =
+
+    (x - 15) + "px";
+
+
+
+  warning.style.top =
+
+    (y - 15) + "px";
+
+
+
+  arena.appendChild(
+
+    warning
+
+  );
+
+
+
+  setTimeout(()=>{
+
+    warning.remove();
+
+  },300);
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+   创建飞弹
+
+
+
+   关键逻辑：
+
+   只在出生时计算一次 velocity
+
+   之后 vx / vy 永远不变
+
+   所以飞弹不会追踪玩家
+
+========================================================= */
+
+
+
+function spawnBullet(){
+
+
+
+  if(
+
+    !gameRunning ||
+
+    gamePaused
+
+  ){
+
+    return;
+
+  }
+
+
+
+
+
+  let x;
+
+  let y;
+
+
+
+  let edge =
+
+    Math.floor(
+
+      Math.random() * 4
+
+    );
+
+
+
+
+
+  const margin = 30;
+
+
+
+
+
+  /* 上 */
+
+  if(edge === 0){
+
+
+
+    x =
+
+      Math.random() *
+
+      window.innerWidth;
+
+
+
+    y = -margin;
+
+  }
+
+
+
+  /* 右 */
+
+  else if(edge === 1){
+
+
+
+    x =
+
+      window.innerWidth +
+
+      margin;
+
+
+
+    y =
+
+      Math.random() *
+
+      window.innerHeight;
+
+  }
+
+
+
+  /* 下 */
+
+  else if(edge === 2){
+
+
+
+    x =
+
+      Math.random() *
+
+      window.innerWidth;
+
+
+
+    y =
+
+      window.innerHeight +
+
+      margin;
+
+  }
+
+
+
+  /* 左 */
+
+  else{
+
+
+
+    x = -margin;
+
+
+
+    y =
+
+      Math.random() *
+
+      window.innerHeight;
+
+  }
+
+
+
+
+
+  /*
+
+    锁定玩家当前所在的位置。
+
+
+
+    注意：
+
+    后面不会再读取 playerX / playerY
+
+    所以不存在追踪。
+
+  */
+
+
+
+  let targetX = playerX;
+
+  let targetY = playerY;
+
+
+
+
+
+  let dx =
+
+    targetX - x;
+
+
+
+  let dy =
+
+    targetY - y;
+
+
+
+
+
+  let angle =
+
+    Math.atan2(
+
+      dy,
+
+      dx
+
+    );
+
+
+
+
+
+  /* 给飞弹一些随机散布 */
+
+  angle +=
+
+    (Math.random() - .5) *
+
+    CONFIG.bulletSpread;
+
+
+
+
+
+  const speed =
+
+    CONFIG.baseBulletSpeed +
+
+    (level - 1) *
+
+    CONFIG.bulletSpeedIncrease +
+
+    Math.random() * 45;
+
+
+
+
+
+  /*
+
+    这里计算后，
+
+    vx/vy 固定。
+
+  */
+
+
+
+  const vx =
+
+    Math.cos(angle) *
+
+    speed;
+
+
+
+  const vy =
+
+    Math.sin(angle) *
+
+    speed;
+
+
+
+
+
+  createWarning(
+
+    Math.max(15,
+
+      Math.min(
+
+        window.innerWidth - 15,
+
+        x
+
+      )
+
+    ),
+
+
+
+    Math.max(15,
+
+      Math.min(
+
+        window.innerHeight - 15,
+
+        y
+
+      )
+
+    )
+
+  );
+
+
+
+
+
+  /*
+
+    先警告 260ms
+
+    再真正发射
+
+  */
+
+
+
+  setTimeout(()=>{
+
+
+
+    if(
+
+      !gameRunning
+
+    ){
+
+      return;
+
+    }
+
+
+
+
+
+    const el =
+
+      document.createElement("div");
+
+
+
+
+
+    el.className =
+
+      "bullet";
+
+
+
+
+
+    arena.appendChild(el);
+
+
+
+
+
+    /* 飞弹旋转方向 */
+
+
+
+    const rotation =
+
+      angle *
+
+      180 /
+
+      Math.PI;
+
+
+
+
+
+    el.style.transform =
+
+      `rotate(${rotation}deg)`;
+
+
+
+
+
+    bullets.push({
+
+
+
+      el,
+
+
+
+      x,
+
+      y,
+
+
+
+      /*
+
+        固定速度
+
+        永不更新方向
+
+      */
+
+
+
+      vx,
+
+      vy,
+
+
+
+      alive:true
+
+
+
+    });
+
+
+
+  },260);
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+   删除飞弹
+
+========================================================= */
+
+
+
+function clearAllBullets(){
+
+
+
+  bullets.forEach(b=>{
+
+    b.el.remove();
+
+  });
+
+
+
+  bullets = [];
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+   HUD
+
+========================================================= */
+
+
+
+function updateHUD(){
+
+
+
+  scoreValue.textContent =
+
+    Math.floor(score);
+
+
+
+  dodgeValue.textContent =
+
+    dodged;
+
+
+
+  levelValue.textContent =
+
+    level;
+
+
+
+
+
+  hearts.forEach(
+
+    (heart,index)=>{
+
+
+
+      heart.classList.toggle(
+
+        "off",
+
+        index >= lives
+
+      );
+
+
+
+    }
+
+  );
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+   碰撞
+
+========================================================= */
+
+
+
+function checkCollision(bullet){
+
+
+
+  if(invincible){
+
+    return false;
+
+  }
+
+
+
+
+
+  const playerRadius =
+
+    Math.min(
+
+      player.offsetWidth,
+
+      player.offsetHeight
+
+    ) *
+
+    CONFIG.playerHitboxScale;
+
+
+
+
+
+  const dx =
+
+    playerX - bullet.x;
+
+
+
+  const dy =
+
+    playerY - bullet.y;
+
+
+
+
+
+  const distanceSquared =
+
+    dx * dx +
+
+    dy * dy;
+
+
+
+
+
+  const hitRadius =
+
+    playerRadius +
+
+    CONFIG.bulletRadius;
+
+
+
+
+
+  return (
+
+    distanceSquared <
+
+    hitRadius * hitRadius
+
+  );
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+   受伤
+
+========================================================= */
+
+
+
+function playerHit(bullet){
+
+
+
+  if(invincible){
+
+    return;
+
+  }
+
+
+
+
+
+  lives--;
+
+
+
+  updateHUD();
+
+
+
+
+
+  createExplosion(
+
+    bullet.x,
+
+    bullet.y
+
+  );
+
+
+
+
+
+  bullet.el.remove();
+
+
+
+  bullet.alive = false;
+
+
+
+
+
+  const flash =
+
+    document.createElement("div");
+
+
+
+  flash.className =
+
+    "hit-flash";
+
+
+
+  gamePage.appendChild(
+
+    flash
+
+  );
+
+
+
+  setTimeout(()=>{
+
+    flash.remove();
+
+  },300);
+
+
+
+
+
+  if(lives <= 0){
+
+
+
+    endGame();
+
+
+
+    return;
+
+  }
+
+
+
+
+
+  /* 短暂无敌 */
+
+
+
+  invincible = true;
+
+
+
+  player.classList.add(
+
+    "invincible"
+
+  );
+
+
+
+
+
+  clearTimeout(
+
+    invincibleTimer
+
+  );
+
+
+
+
+
+  invincibleTimer =
+
+    setTimeout(()=>{
+
+
+
+      invincible = false;
+
+
+
+      player.classList.remove(
+
+        "invincible"
+
+      );
+
+
+
+    },CONFIG.invincibleTime);
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+   爆炸
+
+========================================================= */
+
+
+
+function createExplosion(x,y){
+
+
+
+  const el =
+
+    document.createElement("div");
+
+
+
+  el.className =
+
+    "explosion";
+
+
+
+  el.style.left =
+
+    x + "px";
+
+
+
+  el.style.top =
+
+    y + "px";
+
+
+
+  arena.appendChild(el);
+
+
+
+  setTimeout(()=>{
+
+    el.remove();
+
+  },450);
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+   游戏结束
+
+========================================================= */
+
+
+
+function endGame(){
+
+
+
+  gameRunning = false;
+
+
+
+  pointerDown = false;
+
+
+
+
+
+  clearAllBullets();
+
+
+
+
+
+  const currentScore =
+
+    Math.floor(score);
+
+
+
+
+
+  let best =
+
+    Number(
+
+      localStorage.getItem(
+
+        "memeBulletBest"
+
+      )
+
+    ) || 0;
+
+
+
+
+
+  if(currentScore > best){
+
+
+
+    best =
+
+      currentScore;
+
+
+
+    localStorage.setItem(
+
+      "memeBulletBest",
+
+      best
+
+    );
+
+
+
+  }
+
+
+
+
+
+  finalScore.textContent =
+
+    currentScore;
+
+
+
+  finalDodged.textContent =
+
+    dodged;
+
+
+
+  bestScore.textContent =
+
+    best;
+
+
+
+
+
+  gameOverOverlay.classList.remove(
+
+    "hidden"
+
+  );
+
+
+
+}
+
+
+
+
+
+
+
+/* =========================================================
+
+   主游戏循环
+
+========================================================= */
+
+
+
+function gameLoop(time){
+
+
+
+  requestAnimationFrame(
+
+    gameLoop
+
+  );
+
+
+
+
+
+  if(
+
+    !gameRunning ||
+
+    gamePaused
+
+  ){
+
+
+
+    previousGameTime =
+
+      time;
+
+
+
+    return;
+
+  }
+
+
+
+
+
+  /*
+
+    delta 秒
+
+  */
+
+
+
+  const dt =
+
+    Math.min(
+
+      (time - previousGameTime)
+
+      / 1000,
+
+      .04
+
+    );
+
+
+
+
+
+  previousGameTime =
+
+    time;
+
+
+
+
+
+  gameTime += dt;
+
+
+
+
+
+  /*
+
+    随时间升级
+
+  */
+
+
+
+  level =
+
+    Math.floor(
+
+      gameTime /
+
+      CONFIG.levelDuration
+
+    ) + 1;
+
+
+
+
+
+  /*
+
+    生存得分
+
+  */
+
+
+
+  score +=
+
+    dt *
+
+    (
+
+      10 +
+
+      level * 1.8
+
+    );
+
+
+
+
+
+  /*
+
+    飞弹生成间隔
+
+  */
+
+
+
+  const spawnInterval =
+
+    Math.max(
+
+
+
+      CONFIG.minSpawnInterval,
+
+
+
+      CONFIG.baseSpawnInterval -
+
+      (
+
+        level - 1
+
+      ) *
+
+      CONFIG.spawnIntervalDecrease
+
+
+
+    );
+
+
+
+
+
+  spawnTimer +=
+
+    dt * 1000;
+
+
+
+
+
+  if(
+
+    spawnTimer >=
+
+    spawnInterval
+
+  ){
+
+
+
+    spawnTimer = 0;
+
+
+
+    spawnBullet();
+
+
+
+
+
+    /*
+
+      高等级偶尔一次发射两颗
+
+    */
+
+
+
+    if(
+
+      level >= 5 &&
+
+      Math.random() < .16
+
+    ){
+
+
+
+      setTimeout(
+
+        spawnBullet,
+
+        140
+
+      );
+
+
+
+    }
+
+
+
+  }
+
+
+
+
+
+
+
+  /*
+
+    更新飞弹
+
+  */
+
+
+
+  for(
+
+    let i =
+
+      bullets.length - 1;
+
+
+
+    i >= 0;
+
+
+
+    i--
+
+  ){
+
+
+
+    const b =
+
+      bullets[i];
+
+
+
+
+
+    if(!b.alive){
+
+
+
+      bullets.splice(
+
+        i,
+
+        1
+
+      );
+
+
+
+      continue;
+
+    }
+
+
+
+
+
+    /*
+
+      非追踪核心：
+
+
+
+      这里只根据固定 vx / vy 移动
+
+      完全不会重新计算玩家方向
+
+    */
+
+
+
+    b.x +=
+
+      b.vx * dt;
+
+
+
+    b.y +=
+
+      b.vy * dt;
+
+
+
+
+
+    b.el.style.left =
+
+      b.x + "px";
+
+
+
+    b.el.style.top =
+
+      b.y + "px";
+
+
+
+
+
+    /*
+
+      碰撞
+
+    */
+
+
+
+    if(
+
+      checkCollision(b)
+
+    ){
+
+
+
+      playerHit(b);
+
+
+
+      continue;
+
+
+
+    }
+
+
+
+
+
+    /*
+
+      飞出屏幕
+
+      说明成功躲过
+
+    */
+
+
+
+    const outMargin =
+
+      100;
+
+
+
+
+
+    if(
+
+
+
+      b.x < -outMargin ||
+
+
+
+      b.x >
+
+      window.innerWidth +
+
+      outMargin ||
+
+
+
+      b.y <
+
+      -outMargin ||
+
+
+
+      b.y >
+
+      window.innerHeight +
+
+      outMargin
+
+
+
+    ){
+
+
+
+      b.el.remove();
+
+
+
+      bullets.splice(
+
+        i,
+
+        1
+
+      );
+
+
+
+
+
+      dodged++;
+
+
+
+      score +=
+
+        12 +
+
+        level * 2;
+
+
+
+    }
+
+
+
+  }
+
+
+
+
+
+  updateHUD();
+
+
+
+}
+
+
+
+
+
+requestAnimationFrame(
+
+  gameLoop
+
+);
+
+
+
+
+
+/* =========================================================
+
+   窗口变化
+
+========================================================= */
+
+
+
+window.addEventListener(
+
+  "resize",
+
+  ()=>{
+
+
+
+    const w =
+
+      photo.offsetWidth;
+
+
+
+    const h =
+
+      photo.offsetHeight;
+
+
+
+
+
+    homeX =
+
+      Math.max(
+
+        0,
+
+        Math.min(
+
+          homeX,
+
+          window.innerWidth -
+
+          w
+
+        )
+
+      );
+
+
+
+
+
+    homeY =
+
+      Math.max(
+
+        0,
+
+        Math.min(
+
+          homeY,
+
+          window.innerHeight -
+
+          h
+
+        )
+
+      );
+
+
+
+
+
+    updatePlayerPosition();
+
+
+
+  }
+
+);
+
+
+
+
+
+
+
+/* =========================================================
+
+   ESC暂停
+
+========================================================= */
+
+
+
+window.addEventListener(
+
+  "keydown",
+
+  (e)=>{
+
+
+
+    if(
+
+      e.key !== "Escape"
+
+    ){
+
+      return;
+
+    }
+
+
+
+
+
+    if(
+
+      gamePage.style.display !==
+
+      "block"
+
+    ){
+
+      return;
+
+    }
+
+
+
+
+
+    if(
+
+      gameRunning &&
+
+      !gamePaused
+
+    ){
+
+
+
+      pauseGame();
+
+
+
+    }
+
+    else if(
+
+      gamePaused
+
+    ){
+
+
+
+      resumeGame();
+
+
+
+    }
+
+
+
+  }
+
+);
 
 </script>
+
+
+
 </body>
+
 </html>
