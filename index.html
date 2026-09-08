@@ -11,6 +11,14 @@ body{
   background:radial-gradient(circle at 20% 10%,#2b1b35 0%,#121218 50%,#050508 100%);
   font-family:system-ui,sans-serif;
 }
+/* 首页界面 */
+#homePage{
+  width:100%;height:100%;position:absolute;top:0;left:0;
+}
+/* 游戏界面默认隐藏 */
+#gamePage{
+  width:100%;height:100%;position:absolute;top:0;left:0;display:none;
+}
 .spark{
   position:absolute;width:60px;height:60px;border-radius:50%;
   background:radial-gradient(circle,rgba(255,210,80,0.6) 0%,transparent 70%);
@@ -32,7 +40,7 @@ body{
   color:rgba(255,255,255,0.65);font-size:15px;letter-spacing:1px;pointer-events:none;
 }
 #controlBar{
-  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
   display:flex;gap:14px;align-items:center;z-index:100;
 }
 .tip-btn{
@@ -40,22 +48,66 @@ body{
   backdrop-filter:blur(10px);padding:12px 22px;border-radius:999px;
   border:1px solid rgba(255,255,255,0.18);
 }
+.enterGameBtn{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  z-index:200;
+  background:#ff6644;
+  color:white;border:none;padding:14px 32px;border-radius:999px;
+  font-size:16px;cursor:pointer;
+}
+/* 游戏页面 */
+#gamePlayer{
+  position:absolute;width:22vmin;height:22vmin;
+  border-radius:16px;overflow:hidden;
+}
+#gamePlayer img{width:100%;height:100%;object-fit:cover;}
+.bullet{
+  position:absolute;width:14px;height:14px;background:#ff4444;
+  border-radius:50%;
+}
+.backHomeBtn{
+  position:fixed;top:16px;left:16px;
+  background:#4477ff;color:white;border:none;padding:8px 16px;border-radius:8px;
+  cursor:pointer;z-index:300;
+}
+.gameOverBox{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:#111;padding:30px;border-radius:16px;text-align:center;
+  color:white;display:none;z-index:400;
+}
 </style>
 </head>
 <body>
-<div id="title">👹乱跑的萎缩｜点图片暂停，点空白切换图片</div>
-<div id="photo">
-  <img id="imgEl" src="f57b7468deb628469350c27aad31d26e.png" alt="表情包">
+<!-- 首页 -->
+<div id="homePage">
+  <div id="title">👹乱跑的萎缩｜点图片暂停，点空白切换图片</div>
+  <div id="photo">
+    <img id="imgEl" src="f57b7468deb628469350c27aad31d26e.png" alt="表情包">
+  </div>
+  <div id="controlBar">
+    <div class="tip-btn">🖼点击图片暂停｜点击空白切换表情包</div>
+  </div>
+  <button class="enterGameBtn" onclick="goGame()">🎮进入躲飞弹游戏</button>
 </div>
-<div id="controlBar">
-  <div class="tip-btn">🖼点击图片暂停｜点击空白切换表情包</div>
+
+<!-- 游戏页面 -->
+<div id="gamePage">
+  <button class="backHomeBtn" onclick="goHome()">←返回首页</button>
+  <div id="gamePlayer">
+    <img id="gameImg" src="f57b7468deb628469350c27aad31d26e.png">
+  </div>
+  <div class="gameOverBox" id="gameOverUi">
+    <h2>💥游戏结束！被子弹击中</h2>
+    <p style="margin:12px 0">得分：<span id="scoreText">0</span></p>
+    <button onclick="restartGame()" style="padding:8px 16px;border-radius:6px">重新开始</button>
+    <button onclick="goHome()" style="padding:8px 16px;border-radius:6px;margin-left:8px">返回首页</button>
+  </div>
 </div>
 
 <script>
+// ==========首页表情包代码============
 const photo = document.getElementById("photo");
 const imgEl = document.getElementById("imgEl");
-
-//你的仓库全部三张图片文件名
 const imgList = [
   "f57b7468deb628469350c27aad31d26e.png",
   "10067dde-a329-416b-b6f4-98d5ee70d8ea.png",
@@ -69,19 +121,16 @@ let velX = (Math.random()*2.8+1.2)*(Math.random()>0.5?1:-1);
 let velY = (Math.random()*2.8+1.2)*(Math.random()>0.5?1:-1);
 let running = true;
 
-//点击图片：暂停/继续
 photo.onclick = (e)=>{
-  e.stopPropagation(); //阻止事件冒泡，不会触发切换图片
+  e.stopPropagation();
   running = !running;
 };
-
-//点击页面空白处切换图片
 document.body.onclick = ()=>{
-  currentImgIndex = (currentImgIndex +1) % imgList.length;
-  imgEl.src = imgList[currentImgIndex];
+  if(document.getElementById("homePage").style.display !== "none"){
+    currentImgIndex = (currentImgIndex +1) % imgList.length;
+    imgEl.src = imgList[currentImgIndex];
+  }
 };
-
-//碰撞闪光
 function createSpark(x,y){
   const s = document.createElement("div");
   s.className = "spark";
@@ -90,42 +139,162 @@ function createSpark(x,y){
   document.body.appendChild(s);
   setTimeout(()=>s.remove(),450);
 }
-
 function loop(){
   if(running){
     const w = photo.offsetWidth;
     const h = photo.offsetHeight;
     let hit = false;
-
     posX += velX;
     posY += velY;
-
-    //左右边界
     if(posX <=0){ posX=0;velX=-velX;hit=true; }
     if(posX+w >= window.innerWidth){ posX = window.innerWidth - w; velX=-velX; hit=true; }
-
-    //上下边界
     if(posY <=0){ posY=0; velY=-velY; hit=true; }
     if(posY+h >= window.innerHeight){ posY = window.innerHeight - h; velY=-velY; hit=true; }
-
-    if(hit){
-      createSpark(posX+w/2, posY+h/2);
-    }
-
+    if(hit){ createSpark(posX+w/2, posY+h/2); }
     photo.style.left = posX+"px";
     photo.style.top = posY+"px";
   }
   requestAnimationFrame(loop);
 }
 loop();
-
-//窗口缩放适配
 window.addEventListener("resize",()=>{
   const w = photo.offsetWidth;
   const h = photo.offsetHeight;
   if(posX+w>window.innerWidth) posX = window.innerWidth -w;
   if(posY+h>window.innerHeight) posY = window.innerHeight -h;
 })
+
+// =========页面切换============
+function goGame(){
+  document.getElementById("homePage").style.display="none";
+  document.getElementById("gamePage").style.display="block";
+  startGame();
+}
+function goHome(){
+  document.getElementById("homePage").style.display="block";
+  document.getElementById("gamePage").style.display="none";
+}
+
+// =========躲飞弹游戏逻辑============
+let gamePlayer = document.getElementById("gamePlayer");
+let gameOverUi = document.getElementById("gameOverUi");
+let scoreText = document.getElementById("scoreText");
+let gameRunning = false;
+let score = 0;
+let bullets = [];
+let playerX,playerY;
+let isHold = false;
+
+//长按拖动控制角色（手机触摸 + 电脑鼠标）
+function startGame(){
+  gameOverUi.style.display="none";
+  score = 0;
+  scoreText.innerText=score;
+  bullets.forEach(b=>b.el.remove());
+  bullets=[];
+  gameRunning=true;
+  playerX = window.innerWidth/2;
+  playerY = window.innerHeight/2;
+  updatePlayerPos();
+}
+function restartGame(){
+  startGame();
+}
+function updatePlayerPos(){
+  gamePlayer.style.left = (playerX - gamePlayer.offsetWidth/2)+"px";
+  gamePlayer.style.top = (playerY - gamePlayer.offsetHeight/2)+"px";
+}
+
+//鼠标触摸监听
+document.getElementById("gamePage").addEventListener("mousedown",(e)=>{isHold=true;});
+document.getElementById("gamePage").addEventListener("mouseup",()=>{isHold=false;});
+document.getElementById("gamePage").addEventListener("mousemove",(e)=>{
+  if(gameRunning && isHold){
+    playerX = e.clientX;
+    playerY = e.clientY;
+    updatePlayerPos();
+  }
+})
+document.getElementById("gamePage").addEventListener("touchstart",(e)=>{
+  isHold=true;
+  let t = e.touches[0];
+  playerX = t.clientX;
+  playerY = t.clientY;
+  updatePlayerPos();
+})
+document.getElementById("gamePage").addEventListener("touchmove",(e)=>{
+  e.preventDefault();
+  if(gameRunning && isHold){
+    let t = e.touches[0];
+    playerX = t.clientX;
+    playerY = t.clientY;
+    updatePlayerPos();
+  }
+})
+document.getElementById("gamePage").addEventListener("touchend",()=>{isHold=false;})
+
+//生成子弹
+function spawnBullet(){
+  if(!gameRunning) return;
+  const bulletEl = document.createElement("div");
+  bulletEl.className="bullet";
+  //从屏幕四边随机出来
+  let side = Math.floor(Math.random()*4);
+  let bx,by;
+  if(side===0){bx=Math.random()*window.innerWidth; by=-20;}
+  else if(side===1){bx=window.innerWidth+20; by=Math.random()*window.innerHeight;}
+  else if(side===2){bx=Math.random()*window.innerWidth; by=window.innerHeight+20;}
+  else {bx=-20; by=Math.random()*window.innerHeight;}
+  bulletEl.style.left=bx+"px";
+  bulletEl.style.top=by+"px";
+  document.getElementById("gamePage").appendChild(bulletEl);
+  bullets.push({el:bulletEl,x:bx,y:by});
+}
+
+//游戏循环
+function gameLoop(){
+  if(!gameRunning){
+    requestAnimationFrame(gameLoop);
+    return;
+  }
+  //子弹移动，朝向玩家
+  for(let i=bullets.length-1;i>=0;i--){
+    let b = bullets[i];
+    let dx = playerX - b.x;
+    let dy = playerY - b.y;
+    let dist = Math.sqrt(dx*dx+dy*dy);
+    const speed = 4.5;
+    b.x += (dx/dist)*speed;
+    b.y += (dy/dist)*speed;
+    b.el.style.left = b.x+"px";
+    b.el.style.top = b.y+"px";
+
+    //碰撞检测
+    const pw = gamePlayer.offsetWidth/2;
+    const ph = gamePlayer.offsetHeight/2;
+    let hitDist = Math.sqrt((playerX-b.x)**2 + (playerY-b.y)**2);
+    if(hitDist < pw*0.65){
+      //击中，游戏结束
+      gameRunning = false;
+      gameOverUi.style.display="block";
+    }
+    //飞出屏幕删除子弹
+    if(b.x<-50||b.x>window.innerWidth+50||b.y<-50||b.y>window.innerHeight+50){
+      b.el.remove();
+      bullets.splice(i,1);
+    }
+  }
+  score +=1;
+  scoreText.innerText = Math.floor(score/10);
+  requestAnimationFrame(gameLoop);
+}
+gameLoop();
+
+//定时生成子弹
+setInterval(()=>{
+  if(gameRunning) spawnBullet();
+},550);
+
 </script>
 </body>
 </html>
